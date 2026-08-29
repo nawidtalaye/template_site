@@ -1,0 +1,28 @@
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "25.6.0",
+    "@types/react": "19.2.14",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.2",
+    "typescript": "6.0.2"
+  },
+  "dependencies": {
+    "lucide-react": "^1.8.0",
+    "next": "16.2.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "swiper": "^12.1.3",
+    "tailwindcss": "^4.2.2"
+  },
+  "name": "novatech-site",
+  "private": true,
+  "version": "1.0.0"
+}

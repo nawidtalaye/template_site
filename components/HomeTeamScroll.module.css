@@ -1,0 +1,417 @@
+.section {
+  width: 100%;
+  padding: 5rem clamp(1rem, 5vw, 5rem) 4.5rem;
+  background: #f5f5f5;
+  direction: rtl;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 1240px);
+  margin: 0 auto 3.25rem;
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 0.85rem;
+  color: #45bba7;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+  margin: 0;
+  color: #111827;
+  font-size: clamp(1.625rem, 2.4vw, 2rem);
+  line-height: 1.5;
+}
+
+.signature {
+  width: 129px;
+  height: 19px;
+  margin-top: 0.55rem;
+  object-fit: contain;
+  user-select: none;
+}
+
+.intro {
+  max-width: 42rem;
+  margin: 1.15rem auto 0;
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 2;
+}
+
+/* ---------------------------------------------------------------- track */
+
+/* The track is the scroll runway. Its extra height beyond the pinned frame is
+   the distance every member transition is scrubbed against. */
+.track {
+  --team-pin-top: 88px;
+  --team-step: 150svh;
+  position: relative;
+  width: min(100%, 1240px);
+  margin: 0 auto;
+}
+
+.pin {
+  display: flex;
+  align-items: center;
+}
+
+.stage {
+  display: grid;
+  width: 100%;
+}
+
+.member {
+  --team-clip: 0%;
+  --team-plate-y: 0%;
+  --team-plate-scale: 1;
+  --team-divider: 1;
+  --team-line-0: 0%;
+  --team-line-1: 0%;
+  --team-line-2: 0%;
+  --team-line-3: 0%;
+}
+
+.visual {
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  background: #e9ecef;
+  box-shadow: 0 24px 60px rgb(15 23 42 / 14%);
+}
+
+.plate {
+  width: 100%;
+  height: 100%;
+}
+
+.portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 22%;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.line {
+  margin: 0;
+}
+
+.lineInner {
+  display: block;
+}
+
+.counter {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.counterCurrent {
+  color: #45bba7;
+}
+
+.name {
+  color: #111827;
+  font-size: clamp(1.75rem, 3.4vw, 3rem);
+  line-height: 1.45;
+  text-wrap: balance;
+}
+
+.divider {
+  width: 3.25rem;
+  height: 2px;
+  margin: 1.25rem auto;
+  border-radius: 999px;
+  background: #54dcc6;
+}
+
+.role {
+  color: #374151;
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  line-height: 2;
+}
+
+/* ---------------------------------------------------------- flow layout */
+
+/* Default (mobile, tablet, reduced motion): a plain readable sequence, no pin,
+   no scroll hijacking. */
+.stage {
+  gap: 3.5rem;
+}
+
+.member {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+.rail {
+  display: none;
+}
+
+/* ------------------------------------------------- flow reveal (no pin) */
+
+/*
+ * Below the pinned breakpoint the component scrubs these custom properties
+ * against each member card's own entry into the viewport, so the stacked
+ * column plays the same aperture wipe and line stagger the pinned layout uses
+ * for its handover. The wipe is put on .plate rather than on .visual: a
+ * clip-path on .visual would cut its own drop shadow off mid-reveal.
+ */
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .plate {
+    clip-path: inset(var(--team-clip) 0 0 0);
+    will-change: clip-path;
+  }
+
+  .portrait {
+    transform: translate3d(0, var(--team-plate-y), 0) scale(var(--team-plate-scale));
+    transform-origin: 50% 45%;
+    will-change: transform;
+  }
+
+  /* Each line rides up into place behind its own mask. */
+  .line {
+    overflow: hidden;
+    padding-block: 0.12em;
+    margin-block: -0.12em;
+  }
+
+  .lineInner {
+    will-change: transform;
+  }
+
+  .counter .lineInner {
+    transform: translate3d(0, var(--team-line-0), 0);
+  }
+
+  .name .lineInner {
+    transform: translate3d(0, var(--team-line-1), 0);
+  }
+
+  .role .lineInner {
+    transform: translate3d(0, var(--team-line-3), 0);
+  }
+
+  .divider {
+    transform: scaleX(var(--team-divider));
+    transform-origin: center;
+  }
+}
+
+/* ---------------------------------------------------- pinned desktop layout */
+
+@media (min-width: 1024px) {
+  .track {
+    height: calc(100svh - var(--team-pin-top) + (var(--team-count) - 1) * var(--team-step));
+  }
+
+  .pin {
+    position: sticky;
+    top: var(--team-pin-top);
+    height: calc(100svh - var(--team-pin-top));
+  }
+
+  .stage {
+    position: relative;
+    gap: 0;
+    height: min(100%, 44rem);
+  }
+
+  .member {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 6rem);
+    align-items: center;
+    justify-items: stretch;
+    padding-left: 3.25rem;
+    opacity: 1;
+    transform: none;
+    transition: none;
+    pointer-events: none;
+  }
+
+  .isActive {
+    pointer-events: auto;
+  }
+
+  /* The aperture. Members are stacked in source order, so drawing this mask
+     open wipes the incoming portrait over the one already on screen — no
+     cross-fade, no double exposure. */
+  .visual {
+    max-width: none;
+    height: 100%;
+    max-height: 40rem;
+    aspect-ratio: auto;
+    /* clip-path would clip the drop shadow mid-wipe, so the pinned layout
+       stays flat and lets the photography carry the composition. */
+    box-shadow: none;
+    clip-path: inset(var(--team-clip) 0 0 0 round 1.75rem);
+    transform: translate3d(var(--team-pointer-x, 0px), var(--team-pointer-y, 0px), 0);
+    will-change: clip-path, transform;
+  }
+
+  /* The photograph counter-moves inside the aperture, so the wipe reads as a
+     camera move rather than a sliding sheet. */
+  .plate {
+    transform: translate3d(0, var(--team-plate-y), 0) scale(var(--team-plate-scale));
+    transform-origin: 50% 45%;
+    will-change: transform;
+  }
+
+  .info {
+    align-items: flex-start;
+    text-align: right;
+  }
+
+  /* Each line is handed over behind its own mask, staggered by a fraction of
+     the segment. The outgoing lines clear before the incoming ones arrive. */
+  .line {
+    overflow: hidden;
+    padding-block: 0.12em;
+    margin-block: -0.12em;
+  }
+
+  .lineInner {
+    will-change: transform;
+  }
+
+  .counter .lineInner {
+    transform: translate3d(0, var(--team-line-0), 0);
+  }
+
+  .name .lineInner {
+    transform: translate3d(0, var(--team-line-1), 0);
+  }
+
+  .role .lineInner {
+    transform: translate3d(0, var(--team-line-3), 0);
+  }
+
+  .divider {
+    margin-inline: 0;
+    transform: scaleX(var(--team-divider));
+    transform-origin: right center;
+    will-change: transform;
+  }
+
+  /* --------------------------------------------------------- progress */
+
+  .rail {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    display: block;
+    width: 2px;
+    height: 9rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgb(148 163 184 / 28%);
+    transform: translateY(-50%);
+  }
+
+  .railFill {
+    --team-rail: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background: #54dcc6;
+    transform: scaleY(var(--team-rail));
+    transform-origin: top center;
+    will-change: transform;
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  /* Reduced motion falls back to the plain stacked sequence. */
+  .track {
+    height: auto;
+  }
+
+  .pin {
+    position: static;
+    height: auto;
+  }
+
+  .stage {
+    gap: 4rem;
+    height: auto;
+  }
+
+  .member {
+    position: relative;
+    inset: auto;
+    pointer-events: auto;
+  }
+
+  .visual {
+    max-height: 34rem;
+    clip-path: none;
+    transform: none;
+  }
+
+  .plate,
+  .lineInner,
+  .divider {
+    transform: none;
+  }
+
+  .line {
+    overflow: visible;
+  }
+
+  .rail {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .section {
+    padding: 4rem 1rem 3.5rem;
+  }
+
+  .heading {
+    margin-bottom: 2.5rem;
+  }
+
+  .visual {
+    max-width: 22rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .intro {
+    max-width: 22rem;
+    font-size: 0.88rem;
+  }
+
+  .visual {
+    max-width: 17.5rem;
+  }
+}

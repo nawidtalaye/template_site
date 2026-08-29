@@ -1,0 +1,49 @@
+export const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://novatechsoft.com";
+
+export const companyInfo = {
+  brandName: "نواتیک",
+  latinName: "Novatech",
+  legalName: "Novatech Technology Solutions",
+  title: "شرکت نرم افزاری و تکنالوژی در هرات، افغانستان",
+  shortDescription:
+    "نواتیک شرکت نرم افزاری در هرات افغانستان است؛ نرم افزار اختصاصی، سیستم مدیریت کسب و کار، طراحی دیتابیس، ERP و طراحی سایت برای شرکت ها و سازمان های افغانستان.",
+  longDescription:
+    "نواتیک روی تحلیل فرایند، طراحی دیتابیس و ساخت نرم افزارهای مالی، اداری و عملیاتی کار می کند؛ از سیستم حسابداری و انبار تا داشبورد مدیریتی، لجستیک، فروش و حضور و غیاب. طراحی وب سایت هم بخشی از همین زیرساخت دیجیتال است.",
+  primaryPhoneLabel: "0702008454",
+  primaryPhoneHref: "+93702008454",
+  secondaryPhoneLabel: "0793442006",
+  secondaryPhoneHref: "+93793442006",
+  email: "info@novatechsoft.com",
+  websiteLabel: "novatechsoft.com",
+  websiteUrl: "https://novatechsoft.com",
+  instagramHandle: "@novatechsoft",
+  instagramUrl: "https://instagram.com/novatechsoft",
+  whatsappLabel: "0702008454",
+  whatsappUrl: "https://wa.me/93702008454",
+  address: "پاساژ الماس شرق، هرات، افغانستان",
+  addressStreet: "پاساژ الماس شرق",
+  addressCity: "هرات",
+  addressRegion: "ولایت هرات",
+  addressCountry: "AF",
+  /** Coordinates of the marker already published on the contact-page map. */
+  geoLatitude: 34.3523,
+  geoLongitude: 62.1952,
+  workHours: "۸:۳۰ صبح الی ۱۷:۳۰ بعدازظهر",
+  workDays: "(همه روز به جز تعطیلات رسمی)",
+  /** Machine-readable opening hours matching `workHours` / `workDays`. */
+  openingHours: {
+    days: [
+      "Saturday",
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+    ],
+    opens: "08:30",
+    closes: "17:30",
+  },
+  founderQuote:
+    "ما نرم افزار را فقط برای ثبت اعداد نمی سازیم؛ هدف ما این است که مدیران با داده های درست، تصمیم های دقیق تری بگیرند.",
+};

@@ -1,0 +1,315 @@
+/*
+ * Cinematic poster showcase.
+ *
+ * Card geometry is declared here and read back by the component once per
+ * resize, so the motion math never has to hard-code a size. The card aspect
+ * ratio is fixed at 1:1.3 at every breakpoint — the shape of the product
+ * posters it carries, so a poster fills the frame without its headline or its
+ * contact strip being cropped away. Only the width changes, and it is capped by
+ * viewport height so a landscape phone cannot produce a card taller than the
+ * screen.
+ */
+
+.section {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-height: 90vh;
+  min-height: 90svh;
+  padding: clamp(3rem, 7vh, 5.5rem) 0 clamp(2.5rem, 6vh, 4.5rem);
+  overflow: hidden;
+  background: #090d0d;
+  direction: rtl;
+  isolation: isolate;
+}
+
+/* Barely perceptible key light behind the focal line. Deliberately below the
+   threshold where it reads as a gradient. */
+.section::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(62% 54% at 50% 46%, rgb(29 129 128 / 11%), rgb(9 13 13 / 0%) 68%),
+    radial-gradient(120% 90% at 50% 50%, rgb(255 255 255 / 3%), rgb(9 13 13 / 0%) 60%);
+  content: "";
+  pointer-events: none;
+}
+
+.inner {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+  transition:
+    opacity 900ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.revealed {
+  opacity: 1;
+  transform: none;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto clamp(1.75rem, 4vh, 3rem);
+  padding: 0 1.25rem;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  gap: 0.55rem;
+  align-items: center;
+  margin: 0;
+  color: rgb(253 254 254 / 55%);
+  font-size: clamp(0.68rem, 0.85vw, 0.78rem);
+  letter-spacing: 0.18em;
+}
+
+.eyebrowMark {
+  display: inline-block;
+  width: 1.4rem;
+  height: 1px;
+  background: #1d8180;
+}
+
+.title {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+  margin: 0.75rem 0 0;
+  color: #fdfefe;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 400;
+}
+
+/* ---- the moving strip ------------------------------------------------- */
+
+.viewport {
+  /* Read by the component; every motion measurement derives from these. */
+  --card-w-raw: clamp(268px, 25vw, 420px);
+  --card-height-cap: 64svh;
+  --card-width: min(var(--card-w-raw), calc(var(--card-height-cap) / 1.3));
+  --card-height: calc(var(--card-width) * 1.3);
+  --card-gap: clamp(24px, 3vw, 60px);
+
+  position: relative;
+  width: 100%;
+  /* Extra room so the cinematic shadow is never clipped by overflow: hidden. */
+  height: calc(var(--card-height) * 1.2);
+  overflow: hidden;
+  /* The track uses one predictable coordinate system regardless of the RTL
+     document direction; the text inside each poster opts back in to RTL. */
+  direction: ltr;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.dragging {
+  cursor: grabbing;
+}
+
+.gapProbe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--card-gap);
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.track {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---- poster ------------------------------------------------------------ */
+
+.card {
+  --shadow-alpha: 0.3;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: var(--card-width);
+  height: var(--card-height);
+  overflow: hidden;
+  border-radius: 18px;
+  background: #fdfefe;
+  box-shadow:
+    0 24px 60px rgb(0 0 0 / calc(var(--shadow-alpha) * 60%)),
+    0 6px 18px rgb(0 0 0 / 12%);
+  /* Written by the animation on the first frame; until then the poster stays
+     invisible so nothing is ever painted at an unplaced position. */
+  opacity: 0;
+  backface-visibility: hidden;
+  transform-origin: 50% 50%;
+  will-change: transform, opacity, filter;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.card:focus-visible {
+  outline: 2px solid #1d8180;
+  outline-offset: 5px;
+}
+
+/* Hairline edge: the only decoration on the poster body. */
+.card::after {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border: 1px solid rgb(9 13 13 / 8%);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  background: rgb(var(--poster-tint) / 6%);
+}
+
+.artwork {
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.95) contrast(1.04);
+  transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.card:hover .artwork {
+  transform: scale(1.015);
+}
+
+/* Image fades into the poster body instead of ending on a hard edge. */
+.scrim {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(253 254 254 / 0%) 58%,
+    rgb(253 254 254 / 82%) 76%,
+    #fdfefe 90%
+  );
+  pointer-events: none;
+}
+
+.meta {
+  position: absolute;
+  z-index: 3;
+  right: clamp(1rem, 1.4vw, 1.6rem);
+  bottom: clamp(1.1rem, 1.6vw, 1.75rem);
+  left: clamp(1rem, 1.4vw, 1.6rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  direction: rtl;
+  text-align: right;
+}
+
+.index {
+  color: rgb(9 13 13 / 42%);
+  font-size: clamp(0.62rem, 0.75vw, 0.72rem);
+  letter-spacing: 0.12em;
+}
+
+.kicker {
+  color: #1d8180;
+  font-size: clamp(0.66rem, 0.8vw, 0.76rem);
+  letter-spacing: 0.06em;
+}
+
+.posterTitle {
+  display: block;
+  margin: 0;
+  color: #0e1414;
+  font-size: clamp(1.02rem, 1.35vw, 1.35rem);
+  line-height: 1.45;
+}
+
+.caption {
+  max-width: 34rem;
+  margin: clamp(1.75rem, 4vh, 2.75rem) auto 0;
+  padding: 0 1.5rem;
+  color: rgb(253 254 254 / 42%);
+  font-size: clamp(0.78rem, 0.95vw, 0.9rem);
+  line-height: 2;
+  text-align: center;
+}
+
+/* ---- tablet ------------------------------------------------------------ */
+
+@media (max-width: 1023px) {
+  .viewport {
+    --card-w-raw: clamp(300px, 44vw, 400px);
+    --card-gap: clamp(24px, 3.5vw, 44px);
+  }
+}
+
+/* ---- phone ------------------------------------------------------------- */
+
+/*
+ * Low-power posters. The component stops writing the shadow tint and the
+ * brightness filter below this width, so the shadow is declared flat here and
+ * the poster is promoted for transform alone: sixteen layers each carrying a
+ * 60px shadow repaint is what made the travel stutter on a phone.
+ */
+@media (max-width: 767px) {
+  .card {
+    box-shadow: 0 14px 32px rgb(0 0 0 / 26%);
+    contain: layout paint;
+    will-change: transform, opacity;
+  }
+}
+
+@media (max-width: 600px) {
+  .section {
+    min-height: 84svh;
+    padding: clamp(2.5rem, 6vh, 3.5rem) 0 clamp(2rem, 5vh, 3rem);
+  }
+
+  .viewport {
+    --card-w-raw: 74vw;
+    --card-height-cap: 62svh;
+    --card-gap: 10px;
+  }
+
+  .caption {
+    line-height: 1.9;
+  }
+}
+
+/* Short viewports: keep the whole composition — label, posters, caption —
+   inside one screen instead of letting the posters push it out of frame. */
+@media (min-width: 601px) and (max-height: 800px) {
+  .viewport {
+    --card-height-cap: 54svh;
+  }
+}
+
+/* ---- reduced motion ---------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .inner {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .artwork,
+  .card:hover .artwork {
+    transform: none;
+    transition: none;
+  }
+}

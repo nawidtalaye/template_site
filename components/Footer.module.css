@@ -1,0 +1,63 @@
+/**
+ * Footer visuals as plain CSS — Tailwind did not emit utilities like bg-footer-bg
+ * (theme vars existed but no .bg-footer-* rules in the bundle).
+ * This module always applies real background/border colors.
+ */
+
+.root {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
+.topStrip {
+  background-color: rgb(51 65 85 / 0.6);
+}
+
+.logoLinkMd {
+  border-left: none;
+  padding-left: 0;
+}
+
+@media (min-width: 768px) {
+  .logoLinkMd {
+    border-left: 1px solid #cbd5e1;
+    padding-left: 1rem;
+  }
+}
+
+.description {
+  color: #e2e8f0;
+}
+
+.midRow {
+  border-top: 1px solid #475569;
+  border-bottom: 1px solid #475569;
+}
+
+.addressCol {
+  border-left: none;
+  padding-left: 0;
+}
+
+@media (min-width: 1024px) {
+  .addressCol {
+    border-left: 1px solid #475569;
+    padding-left: 1.5rem;
+  }
+}
+
+.trustBadgeDark {
+  background-color: #0f172a;
+}
+
+.socialBtn {
+  border: 1px solid #94a3b8;
+}
+
+.socialBtn:hover {
+  background-color: #475569;
+}

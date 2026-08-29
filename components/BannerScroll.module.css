@@ -1,0 +1,255 @@
+/*
+ * Pinned brand-banner story.
+ *
+ * Desktop: the track is taller than the screen and the inner panel is sticky,
+ * so scrolling through the section plays the fan-out instead of moving the
+ * content past the eye. Below 1024px the pin is dropped entirely — the cards
+ * become a normal stacked column, which is what a small screen can actually
+ * show — and the component scrubs each card against its own entry into the
+ * viewport instead of against the section.
+ */
+
+.section {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  direction: rtl;
+}
+
+.track {
+  position: relative;
+  width: 100%;
+}
+
+.sticky {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(3rem, 8vh, 5rem) clamp(1.25rem, 4vw, 4rem);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto clamp(2rem, 5vh, 3.25rem);
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  gap: 0.55rem;
+  align-items: center;
+  margin: 0;
+  color: rgb(36 42 50 / 55%);
+  font-size: clamp(0.68rem, 0.85vw, 0.78rem);
+  letter-spacing: 0.14em;
+}
+
+.eyebrowMark {
+  display: inline-block;
+  width: 1.4rem;
+  height: 1px;
+  background: #1d8180;
+}
+
+.title {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+  margin: 0.75rem 0 0;
+  color: #242a32;
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  font-weight: 400;
+}
+
+.stage {
+  display: flex;
+  gap: clamp(1rem, 2vw, 2.25rem);
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex: 0 1 360px;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+  padding: 0.75rem 0.75rem 1.35rem;
+  border: 1px solid rgb(36 42 50 / 8%);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 18px 46px rgb(15 15 15 / 8%);
+  /* Written by the component on every frame while the section is pinned. */
+  transform-origin: 50% 65%;
+  transition:
+    box-shadow 400ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    border-color 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform, opacity;
+}
+
+.card:hover {
+  border-color: rgb(29 129 128 / 35%);
+  box-shadow: 0 26px 60px rgb(15 15 15 / 14%);
+}
+
+.card:focus-visible {
+  outline: 2px solid #1d8180;
+  outline-offset: 4px;
+}
+
+.frame {
+  display: block;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgb(29 129 128 / 6%);
+}
+
+/* The banners are finished artwork: they are shown whole, never cropped. */
+.artwork {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  transition: transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.card:hover .artwork {
+  transform: scale(1.02);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0 0.5rem;
+  text-align: right;
+}
+
+.kicker {
+  color: #1d8180;
+  font-size: clamp(0.68rem, 0.8vw, 0.78rem);
+  letter-spacing: 0.06em;
+}
+
+.cardTitle {
+  display: block;
+  color: #242a32;
+  font-size: clamp(0.98rem, 1.15vw, 1.12rem);
+  line-height: 1.75;
+}
+
+.description {
+  color: rgb(36 42 50 / 62%);
+  font-size: clamp(0.78rem, 0.9vw, 0.86rem);
+  line-height: 2;
+}
+
+.action {
+  margin-top: 0.35rem;
+  color: #1d8180;
+  font-size: clamp(0.76rem, 0.88vw, 0.84rem);
+}
+
+.action::after {
+  content: " ←";
+  display: inline-block;
+  transition: transform 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.card:hover .action::after {
+  transform: translateX(-4px);
+}
+
+/* ---- pinned range ------------------------------------------------------ */
+
+@media (min-width: 1024px) {
+  .track {
+    /* Scroll distance the fan-out is played over. */
+    height: 260vh;
+  }
+
+  .sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    padding-block: clamp(4.5rem, 9vh, 6rem) clamp(1.5rem, 4vh, 3rem);
+  }
+
+  .stage {
+    align-items: center;
+  }
+
+  /*
+   * Pinned, the whole composition has to fit one screen. The artwork height is
+   * taken from the viewport and the card width is derived from it through the
+   * banner's own aspect ratio (--ratio, set per card by the component), so a
+   * square banner and a portrait one both sit whole inside the sticky panel.
+   */
+  .stage {
+    --art-height: clamp(230px, 42svh, 460px);
+  }
+
+  .card {
+    flex: 0 0 auto;
+    width: calc(var(--art-height) * var(--ratio) + 1.5rem);
+    max-width: 33%;
+  }
+}
+
+/* Short laptops: give the artwork less of the screen so the caption survives. */
+@media (min-width: 1024px) and (max-height: 820px) {
+  .stage {
+    --art-height: clamp(200px, 34svh, 340px);
+  }
+
+  .description {
+    display: none;
+  }
+}
+
+/* ---- phone and tablet: no pin, plain column --------------------------- */
+
+@media (max-width: 1023px) {
+  .stage {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    flex-basis: auto;
+    width: min(100%, 420px);
+    /* The card rises out of its tilt, so it pivots on its own base rather
+       than around a point somewhere below it. */
+    transform-origin: 50% 100%;
+  }
+}
+
+/* ---- reduced motion ---------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    height: auto;
+  }
+
+  .sticky {
+    position: static;
+    height: auto;
+  }
+
+  .stage {
+    flex-wrap: wrap;
+  }
+
+  .artwork,
+  .card:hover .artwork {
+    transform: none;
+    transition: none;
+  }
+}
