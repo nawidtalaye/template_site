@@ -35,82 +35,56 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // Old multi-page routes permanently redirected to the single-page showcase sections
-      {
-        source: "/oil-and-gas-software",
-        destination: "/#intro",
-        statusCode: 301,
-      },
-      {
-        source: "/software-solutions",
-        destination: "/#features",
-        statusCode: 301,
-      },
-      {
-        source: "/business-systems",
-        destination: "/#modules",
-        statusCode: 301,
-      },
-      {
-        source: "/database-solutions",
-        destination: "/#capabilities",
-        statusCode: 301,
-      },
-      {
-        source: "/erp",
-        destination: "/#modules",
-        statusCode: 301,
-      },
-      {
-        source: "/accounting-software",
-        destination: "/#modules",
-        statusCode: 301,
-      },
-      {
-        source: "/web-design",
-        destination: "/#plans",
-        statusCode: 301,
-      },
-      {
-        source: "/graphic-design",
-        destination: "/#showcase",
-        statusCode: 301,
-      },
-      {
-        source: "/portfolio",
-        destination: "/#showcase",
-        statusCode: 301,
-      },
-      {
-        source: "/portfolio/:slug",
-        destination: "/#showcase",
-        statusCode: 301,
-      },
-      {
-        source: "/about",
-        destination: "/#about",
-        statusCode: 301,
-      },
-      {
-        source: "/herat",
-        destination: "/#about",
-        statusCode: 301,
-      },
-      {
-        source: "/contact",
-        destination: "/#contact",
-        statusCode: 301,
-      },
-      {
-        source: "/blog",
-        destination: "/",
-        statusCode: 301,
-      },
-      {
-        source: "/blog/:slug",
-        destination: "/",
-        statusCode: 301,
-      },
+      // Core oil & gas legacy pages -> relevant sections
+      { source: "/oil-and-gas-software", destination: "/#intro", statusCode: 301 },
+      { source: "/oil-and-gas", destination: "/#intro", statusCode: 301 },
+      { source: "/petroleum-software", destination: "/#intro", statusCode: 301 },
+      { source: "/fuel-management", destination: "/#features", statusCode: 301 },
+      { source: "/software-solutions", destination: "/#features", statusCode: 301 },
+      { source: "/business-systems", destination: "/#modules", statusCode: 301 },
+      { source: "/database-solutions", destination: "/#capabilities", statusCode: 301 },
+      { source: "/erp", destination: "/#modules", statusCode: 301 },
+      { source: "/accounting-software", destination: "/#modules", statusCode: 301 },
+      { source: "/services", destination: "/#services", statusCode: 301 },
+      { source: "/services/:slug", destination: "/#services", statusCode: 301 },
+      { source: "/products", destination: "/#modules", statusCode: 301 },
+      { source: "/products/:slug", destination: "/#modules", statusCode: 301 },
+      { source: "/solutions", destination: "/#capabilities", statusCode: 301 },
+      { source: "/solutions/:slug", destination: "/#capabilities", statusCode: 301 },
+
+      // Design & portfolio legacy
+      { source: "/web-design", destination: "/#plans", statusCode: 301 },
+      { source: "/graphic-design", destination: "/#showcase", statusCode: 301 },
+      { source: "/portfolio", destination: "/#showcase", statusCode: 301 },
+      { source: "/portfolio/:slug", destination: "/#showcase", statusCode: 301 },
+      { source: "/projects", destination: "/#showcase", statusCode: 301 },
+      { source: "/projects/:slug", destination: "/#showcase", statusCode: 301 },
+
+      // Company pages
+      { source: "/about", destination: "/#about", statusCode: 301 },
+      { source: "/about-us", destination: "/#about", statusCode: 301 },
+      { source: "/herat", destination: "/#about", statusCode: 301 },
+      { source: "/team", destination: "/#team", statusCode: 301 },
+      { source: "/contact", destination: "/#contact", statusCode: 301 },
+      { source: "/contact-us", destination: "/#contact", statusCode: 301 },
+
+      // Pricing & trust
+      { source: "/pricing", destination: "/#plans", statusCode: 301 },
+      { source: "/plans", destination: "/#plans", statusCode: 301 },
+      { source: "/customers", destination: "/#trust", statusCode: 301 },
+      { source: "/clients", destination: "/#trust", statusCode: 301 },
+
+      // Blog removed -> home
+      { source: "/blog", destination: "/", statusCode: 301 },
+      { source: "/blog/:slug", destination: "/", statusCode: 301 },
+      { source: "/news", destination: "/", statusCode: 301 },
+      { source: "/news/:slug", destination: "/", statusCode: 301 },
+      { source: "/articles", destination: "/", statusCode: 301 },
+      { source: "/articles/:slug", destination: "/", statusCode: 301 },
+
+      // Catch-all for any other legacy single pages that might have existed
+      { source: "/fa/:path*", destination: "/", statusCode: 301 },
+      { source: "/en/:path*", destination: "/", statusCode: 301 },
     ];
   },
 
@@ -118,15 +92,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/fonts/:path*",
-        headers: [
-          { key: "Cache-Control", value: `public, max-age=${ONE_YEAR}, immutable` },
-        ],
+        headers: [{ key: "Cache-Control", value: `public, max-age=${ONE_YEAR}, immutable` }],
       },
       {
         source: "/:all*(png|jpg|jpeg|webp|avif|gif|svg|ico|mp4)",
-        headers: [
-          { key: "Cache-Control", value: `public, max-age=${ONE_YEAR}, immutable` },
-        ],
+        headers: [{ key: "Cache-Control", value: `public, max-age=${ONE_YEAR}, immutable` }],
       },
       {
         source: "/:path*",
@@ -134,10 +104,7 @@ const nextConfig: NextConfig = {
           { key: "Content-Security-Policy", value: CSP },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
-          },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
         ],
       },
     ];
