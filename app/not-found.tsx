@@ -8,30 +8,28 @@ export const metadata: Metadata = {
 };
 
 const suggestions = [
-  { href: "/", label: "صفحه اصلی" },
-  { href: "/software-solutions", label: "نرم افزار و دیتابیس" },
-  { href: "/accounting-software", label: "نرم افزار حسابداری" },
-  { href: "/web-design", label: "طراحی سایت" },
-  { href: "/portfolio", label: "نمونه کارها" },
-  { href: "/contact", label: "تماس با ما" },
+  { href: "/", label: "صفحه اصلی سامانه" },
+  { href: "/#features", label: "امکانات نرم‌افزار" },
+  { href: "/#modules", label: "ماژول‌های تخصصی" },
+  { href: "/#plans", label: "پلن‌ها و تعرفه‌ها" },
+  { href: "/#contact", label: "تماس و درخواست دمو" },
 ];
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[60vh] w-full flex-col items-center justify-center gap-6 px-6 py-24 text-center">
+    <div className="flex min-h-[70vh] w-full flex-col items-center justify-center gap-6 px-6 py-28 text-center bg-slate-950 text-white">
       <p className="fat text-[80px] leading-none text-primary md:text-[120px]">۴۰۴</p>
-      <h1 className="text-2xl md:text-3xl">این صفحه پیدا نشد</h1>
-      <p className="max-w-xl text-gray-600 leading-8">
-        ممکن است آدرس تغییر کرده باشد یا صفحه حذف شده باشد. از مسیرهای زیر ادامه دهید یا با
-        {" "}
-        {companyInfo.brandName} تماس بگیرید.
+      <h1 className="text-2xl md:text-3xl font-bold fat">این صفحه پیدا نشد</h1>
+      <p className="max-w-xl text-slate-300 leading-8 text-sm sm:text-base regular">
+        صفحه مورد نظر شما به صفحه اصلی سامانه جامع نفت و گاز منتقل شده است.
+        جهت بررسی امکانات و دریافت مشاوره، از پیوندهای زیر استفاده فرمایید.
       </p>
-      <nav aria-label="پیشنهاد مسیرها" className="flex flex-wrap justify-center gap-3">
+      <nav aria-label="پیشنهاد مسیرها" className="flex flex-wrap justify-center gap-3 mt-4">
         {suggestions.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="rounded-full border border-primary px-5 py-2 text-primary transition-colors duration-300 hover:bg-primary hover:text-white"
+            className="rounded-full border border-primary/50 bg-primary/10 px-5 py-2.5 text-sm font-bold text-primary transition-all duration-300 hover:bg-primary hover:text-slate-950"
           >
             {item.label}
           </Link>

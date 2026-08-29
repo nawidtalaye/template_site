@@ -2,194 +2,243 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { companyInfo } from "@/lib/site-content";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  Activity,
+  Award,
+  BarChart3,
+  Boxes,
+  CheckCircle2,
   ChevronLeft,
-  Database,
-  FolderOpen,
-  Globe,
+  Coins,
+  FileSpreadsheet,
+  Fuel,
   Headset,
-  House,
+  Home,
+  Info,
+  Layers,
   Menu,
   PhoneCall,
-  Users,
+  ShieldCheck,
+  Sparkles,
+  Workflow,
   X,
 } from "lucide-react";
+import { companyInfo } from "@/lib/site-content";
+
+const NAV_ITEMS = [
+  { href: "#hero", label: "خانه", icon: Home },
+  { href: "#intro", label: "معرفی", icon: Info },
+  { href: "#features", label: "امکانات", icon: Sparkles },
+  { href: "#modules", label: "ماژول‌ها", icon: Boxes },
+  { href: "#capabilities", label: "راهکارها", icon: Fuel },
+  { href: "#statistics", label: "آمار", icon: BarChart3 },
+  { href: "#how-it-works", label: "فرآیند", icon: Workflow },
+  { href: "#showcase", label: "نمای نرم‌افزار", icon: Activity },
+  { href: "#plans", label: "پلن‌ها", icon: Coins },
+  { href: "#about", label: "درباره نواتیک", icon: Award },
+  { href: "#contact", label: "تماس", icon: PhoneCall },
+];
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
 
-  const navItems = [
-    { href: "c", label: "صفحه اصلی", icon: House },
-    { href: "/software-solutions", label: "نرم افزار و دیتابیس", icon: Database },
-    { href: "/web-design", label: "طراحی سایت", icon: Globe },
-    { href: "/portfolio", label: "نمونه کارها", icon: FolderOpen },
-    { href: "/about", label: "درباره ما", icon: Users },
-    { href: "/contact", label: "تماس با ما", icon: PhoneCall },
-  ];
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+
+      // Scrollspy active section detection
+      const sections = NAV_ITEMS.map((item) => item.href.replace("#", ""));
+      const scrollPosition = window.scrollY + 180;
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i]);
+        if (el && el.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((previousValue) => !previousValue);
+    setIsMobileMenuOpen((prev) => !prev);
   };
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
 
-  const isActiveLink = (href: string) => pathname === href;
+  const scrollToAnchor = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const targetId = href.substring(1);
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+        closeMobileMenu();
+      }
+    }
+  };
 
   return (
     <>
       <header
         id="header"
-        className="fixed top-0 mx-auto z-40 bg-white w-full shadow-md"
+        className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
+          scrolled
+            ? "bg-slate-950/95 backdrop-blur-md border-b border-white/10 shadow-xl py-3"
+            : "bg-slate-950/80 backdrop-blur-sm border-b border-white/5 py-4"
+        }`}
       >
-        <div className="bg-white max-w-screen-2xl mx-auto w-full">
-          <div className="2xl:w-[1540px] w-full md:drop-shadow-none bg-white z-20 duration-200 py-4 px-[30px] lg:px-[130px]">
-          <div className="flex justify-between items-center medium">
-            <div className="flex gap-10">
-              <Link href="/">
-                <Image
-                  alt={`لوگوی ${companyInfo.brandName}`}
-                  src="/images/novatech-logo.webp"
-                  width={960}
-                  height={803}
-                  priority
-                  sizes="80px"
-                  className="h-10 w-auto object-contain md:h-11"
-                />
-              </Link>
-              <nav aria-label="منوی اصلی" className="hidden lg:block">
-                <ul className="flex justify-center gap-5 items-center">
-                  {navItems.map((item) => (
-                    <li
-                      key={item.href}
-                      className="lg:hover:text-primary text-slate-700 h-full duration-200 flex justify-center items-center gap-2 mt-0"
-                    >
-                      <Link
-                        className={`flex justify-center items-center gap-2 ${isActiveLink(item.href) ? "text-primary" : ""}`}
-                        href={item.href}
-                        aria-current={isActiveLink(item.href) ? "page" : undefined}
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-4">
+            {/* Logo & Brand Tagline */}
+            <div className="flex items-center gap-6">
+              <a
+                href="#hero"
+                onClick={(e) => scrollToAnchor(e, "#hero")}
+                className="flex items-center gap-3 group"
+              >
+                <div className="h-10 w-auto rounded-lg bg-white p-1.5 flex items-center justify-center shadow-md">
+                  <Image
+                    alt={`لوگوی ${companyInfo.brandName}`}
+                    src="/images/novatech-logo.webp"
+                    width={180}
+                    height={50}
+                    priority
+                    sizes="120px"
+                    className="h-7 w-auto object-contain"
+                  />
+                </div>
+                <div className="hidden sm:flex flex-col text-right">
+                  <span className="text-sm font-bold text-white group-hover:text-primary transition-colors">
+                    نفت و گاز نواتیک
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    سامانه هوشمند مدیریت و حسابداری
+                  </span>
+                </div>
+              </a>
+
+              {/* Desktop Navigation Links */}
+              <nav aria-label="منوی اصلی سامانه" className="hidden xl:block">
+                <ul className="flex items-center gap-1">
+                  {NAV_ITEMS.map((item) => {
+                    const isActive = activeSection === item.href.replace("#", "");
+                    return (
+                      <li key={item.href}>
+                        <a
+                          href={item.href}
+                          onClick={(e) => scrollToAnchor(e, item.href)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+                            isActive
+                              ? "text-primary bg-primary/10 font-bold"
+                              : "text-slate-300 hover:text-white hover:bg-white/5"
+                          }`}
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
               </nav>
             </div>
-            <div className="flex justify-end items-center gap-3">
+
+            {/* Actions: Direct Phone CTA & Mobile Hamburger */}
+            <div className="flex items-center gap-2.5">
               <a
-                className="flex items-center gap-2 border rounded-full p-2 text-slate-700 lg:hover:text-primary duration-200 cursor-pointer lg:hover:shadow-md"
                 href={`tel:${companyInfo.primaryPhoneHref}`}
+                className="hidden md:flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/10 hover:bg-primary hover:text-slate-950 border border-white/15 text-white text-xs font-bold transition-all duration-200 shadow-sm"
               >
-                <PhoneCall className="text-2xl" aria-hidden="true" />
-                <p className="hidden md:block">تماس مستقیم با کارشناسان</p>
+                <PhoneCall className="size-3.5 text-primary group-hover:text-slate-950" />
+                <span dir="ltr" className="font-mono">{companyInfo.primaryPhoneLabel}</span>
               </a>
-              <button
-                onClick={toggleMobileMenu}
-                className="border rounded-full p-2 text-slate-700 lg:hover:text-primary duration-200 cursor-pointer lg:hover:shadow-md lg:hidden"
-                aria-label={isMobileMenuOpen ? "بستن منو" : "باز کردن منو"}
-                aria-expanded={isMobileMenuOpen}
-                aria-controls="mobile-navigation"
+
+              <a
+                href="#contact"
+                onClick={(e) => scrollToAnchor(e, "#contact")}
+                className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary hover:bg-primary-hover text-slate-950 text-xs font-bold transition-all duration-200 shadow-md shadow-primary/20 active:scale-95"
               >
-                {isMobileMenuOpen ? (
-                  <X className="text-2xl" aria-hidden="true" />
-                ) : (
-                  <Menu className="text-2xl" aria-hidden="true" />
-                )}
+                <span>درخواست دمو</span>
+              </a>
+
+              {/* Mobile Menu Toggle Button */}
+              <button
+                type="button"
+                onClick={toggleMobileMenu}
+                className="xl:hidden p-2 rounded-xl bg-white/10 border border-white/15 text-white hover:text-primary transition-colors"
+                aria-label={isMobileMenuOpen ? "بستن منو" : "باز کردن منوی ناوبری"}
+                aria-expanded={isMobileMenuOpen}
+              >
+                {isMobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
               </button>
             </div>
           </div>
         </div>
-        </div>
 
+        {/* Mobile Navigation Drawer */}
         <div
           id="mobile-navigation"
-          className="mobile-header-menu lg:hidden"
-          aria-hidden={!isMobileMenuOpen}
-          inert={!isMobileMenuOpen}
+          className="xl:hidden transition-all duration-300 overflow-hidden bg-slate-950/98 border-b border-white/10"
           style={{
+            maxHeight: isMobileMenuOpen ? "80vh" : "0",
             opacity: isMobileMenuOpen ? 1 : 0,
             visibility: isMobileMenuOpen ? "visible" : "hidden",
-            pointerEvents: isMobileMenuOpen ? "auto" : "none",
-            transform: isMobileMenuOpen ? "translateY(0)" : "translateY(-0.75rem)",
           }}
         >
-          <nav aria-label="منوی موبایل" className="px-[30px] py-6 max-h-[calc(100vh-72px)] overflow-y-auto">
-            <ul className="flex flex-col gap-3">
-              {navItems.map((item) => {
+          <nav aria-label="منوی موبایل" className="px-4 py-5 overflow-y-auto max-h-[75vh]">
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
-                const isActive = isActiveLink(item.href);
+                const isActive = activeSection === item.href.replace("#", "");
 
                 return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={closeMobileMenu}
-                      aria-current={isActive ? "page" : undefined}
-                      className={`flex items-center justify-between gap-3 py-3.5 px-4 rounded-2xl border transition-all duration-200 ${
-                        isActive
-                          ? "bg-primary/10 border-primary/20 text-primary shadow-sm"
-                          : "bg-white border-gray-100 text-slate-700 hover:bg-gray-50 hover:border-gray-200"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`size-11 rounded-2xl flex items-center justify-center ${
-                            isActive ? "bg-primary text-white" : "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          <Icon className="size-5" aria-hidden="true" />
-                        </span>
-                        <span className="font-medium">{item.label}</span>
-                      </div>
-                      <ChevronLeft aria-hidden="true" className={`size-5 ${isActive ? "text-primary" : "text-gray-400"}`} />
-                    </Link>
-                  </li>
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={(e) => scrollToAnchor(e, item.href)}
+                    className={`flex items-center gap-2.5 p-3 rounded-xl border text-xs font-medium transition-all ${
+                      isActive
+                        ? "bg-primary/20 border-primary text-primary font-bold shadow-sm"
+                        : "bg-white/[0.04] border-white/10 text-slate-300 hover:bg-white/[0.08]"
+                    }`}
+                  >
+                    <Icon className="size-4 shrink-0" />
+                    <span>{item.label}</span>
+                  </a>
                 );
               })}
-              <li className="pt-2">
-                <a
-                  href={`tel:${companyInfo.primaryPhoneHref}`}
-                  className="flex items-center justify-between gap-3 py-3.5 px-4 rounded-2xl bg-[#45505F] text-white shadow-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="size-11 rounded-2xl flex items-center justify-center bg-primary/20 text-primary">
-                      <Headset className="size-5" aria-hidden="true" />
-                    </span>
-                    <div className="flex flex-col">
-                      <span className="font-medium">ارتباط با پشتیبانی</span>
-                      <span className="text-xs text-white/70">تماس سریع با کارشناسان</span>
-                    </div>
-                  </div>
-                  <PhoneCall className="size-5 text-primary" aria-hidden="true" />
-                </a>
-              </li>
-            </ul>
+            </div>
+
+            <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
+              <a
+                href={`tel:${companyInfo.primaryPhoneHref}`}
+                className="flex items-center justify-between p-3 rounded-xl bg-primary text-slate-950 font-bold text-xs"
+              >
+                <div className="flex items-center gap-2">
+                  <PhoneCall className="size-4" />
+                  <span>تماس با کارشناس نفتی</span>
+                </div>
+                <span dir="ltr" className="font-mono">{companyInfo.primaryPhoneLabel}</span>
+              </a>
+            </div>
           </nav>
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Backdrop overlay for mobile menu */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 xl:hidden"
           onClick={closeMobileMenu}
         />
-      )}
-
-      {!isMobileMenuOpen && (
-        <a
-          href={`tel:${companyInfo.primaryPhoneHref}`}
-          className="fixed bottom-5 left-5 lg:hidden z-30 size-14 rounded-full bg-[#45505F] text-white shadow-2xl flex items-center justify-center border border-white/20"
-          aria-label="ارتباط با پشتیبانی"
-        >
-          <Headset className="size-6 text-primary" aria-hidden="true" />
-        </a>
       )}
     </>
   );
