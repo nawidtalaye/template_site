@@ -1,67 +1,90 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Reveal from "@/components/Reveal";
 import { showcaseContent } from "@/lib/showcase-content";
+
+const DURATION = 1400;
+const TARGETS = showcaseContent.statistics.map((stat) => stat.value);
 
 export default function Statistics() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [inView, setInView] = useState(false);
-  const [counts, setCounts] = useState<number[]>([0, 0, 0, 0]);
+  // The real figures are server-rendered, so the section still reads correctly
+  // without JavaScript; the count-up is a progressive enhancement on top.
+  const [counts, setCounts] = useState<number[]>(TARGETS);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) setInView(true); }, { threshold: 0.25 });
     const el = sectionRef.current;
-    if (el) observer.observe(el);
-    return () => { if (el) observer.unobserve(el); };
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let frame = 0;
+    let start = 0;
+
+    const tick = (now: number) => {
+      if (!start) start = now;
+      const progress = Math.min(1, (now - start) / DURATION);
+      // easeOutExpo — fast start, settles softly on the final value
+      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setCounts(TARGETS.map((target) => Math.round(target * eased)));
+      if (progress < 1) frame = window.requestAnimationFrame(tick);
+    };
+
+    // Triggering 20% of a viewport early means the reset to zero happens while
+    // the figures are still below the fold, so no flicker is visible.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        setCounts(TARGETS.map(() => 0));
+        frame = window.requestAnimationFrame(tick);
+      },
+      { threshold: 0, rootMargin: "0px 0px 20% 0px" },
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      if (frame) window.cancelAnimationFrame(frame);
+    };
   }, []);
 
-  useEffect(() => {
-    if (!inView) return;
-    const targets = showcaseContent.statistics.map((s) => s.value);
-    const duration = 1600;
-    const steps = 48;
-    const stepTime = duration / steps;
-    let currentStep = 0;
-    const interval = setInterval(() => {
-      currentStep++;
-      const progress = currentStep / steps;
-      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      setCounts(targets.map((t) => Math.round(t * eased)));
-      if (currentStep >= steps) { clearInterval(interval); setCounts(targets); }
-    }, stepTime);
-    return () => clearInterval(interval);
-  }, [inView]);
-
   return (
-    <section id="statistics" ref={sectionRef} className="py-16 lg:py-20 bg-slate-900 text-white relative overflow-hidden" aria-label="آمار و شاخص‌ها">
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-80 h-80 bg-[#54dcc6]/15 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-cyan-400/10 rounded-full blur-3xl" />
-        <div className="absolute inset-0 bg-grid-light opacity-[0.08]" />
-      </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-[#54dcc6] text-xs font-bold mb-3">آمارها با انیمیشن شمارشگر</div>
-          <h2 className="text-2xl sm:text-3xl font-black fat text-white mb-2">شاخص‌های عملیاتی در یک نگاه</h2>
-          <p className="text-slate-300 text-sm">ارقام واقعی از ظرفیت‌های سامانه نواتیک در صنعت انرژی</p>
-        </div>
+    <section
+      ref={sectionRef}
+      id="statistics"
+      className="bg-slate-900 py-16 lg:py-20"
+      aria-labelledby="statistics-heading"
+    >
+      <div className="mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8">
+        <Reveal>
+          <h2 id="statistics-heading" className="text-[13px] font-bold tracking-wide text-[#54dcc6]">
+            شاخص‌های سامانه
+          </h2>
+        </Reveal>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          {showcaseContent.statistics.map((stat, idx) => {
-            const displayValue = inView ? counts[idx] : 0;
-            return (
-              <div key={stat.label} className="flex flex-col items-center text-center p-6 rounded-[20px] bg-white/[0.06] border border-white/10 backdrop-blur-sm hover:border-[#54dcc6]/40 hover:bg-white/[0.08] transition-all group">
-                <div className="flex items-baseline gap-1 text-3xl sm:text-4xl md:text-5xl font-black fat text-[#54dcc6] font-mono mb-3 animate-counter">
-                  <span>{displayValue}</span>
-                  <span className="text-2xl sm:text-3xl font-bold">{stat.suffix}</span>
-                </div>
-                <h3 className="text-sm sm:text-[15px] font-bold text-white mb-1">{stat.label}</h3>
-                <p className="text-[11px] sm:text-xs text-slate-400 leading-normal max-w-[200px]">{stat.subtext}</p>
-              </div>
-            );
-          })}
-        </div>
-        <p className="text-center text-[11px] text-slate-500 mt-8">* ارقام بر اساس داده‌های مستقر و ظرفیت عملیاتی نرم‌افزار نواتیک است.</p>
+        <dl className="mt-8 grid grid-cols-2 gap-y-10 lg:grid-cols-4">
+          {showcaseContent.statistics.map((stat, index) => (
+            <Reveal
+              key={stat.label}
+              delay={index * 80}
+              className="border-t border-slate-700 pt-6 lg:border-t-0 lg:border-e lg:border-e-slate-700 lg:px-8 lg:first:ps-0 lg:last:border-e-0 lg:last:pe-0"
+            >
+              <dd className="flex items-baseline gap-1">
+                <span className="font-mono text-[34px] font-bold leading-none text-white sm:text-[42px]">
+                  {counts[index]}
+                </span>
+                {stat.suffix ? (
+                  <span className="font-mono text-[20px] font-bold text-[#54dcc6] sm:text-[24px]">
+                    {stat.suffix}
+                  </span>
+                ) : null}
+              </dd>
+              <dt className="mt-3 text-[13.5px] font-bold text-white">{stat.label}</dt>
+              <p className="mt-1.5 max-w-[240px] text-[12px] leading-[1.9] text-slate-400">{stat.subtext}</p>
+            </Reveal>
+          ))}
+        </dl>
       </div>
     </section>
   );

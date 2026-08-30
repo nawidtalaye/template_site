@@ -1,15 +1,15 @@
 import HomeClient from "./HomeClient";
 import JsonLd from "@/components/JsonLd";
 import { buildMetadata } from "@/lib/metadata";
-import { breadcrumbSchema, graph, serviceSchema, webPageSchema } from "@/lib/seo";
+import { graph, serviceSchema, webPageSchema } from "@/lib/seo";
 import { companyInfo, siteUrl } from "@/lib/site-content";
 
 const showcaseTitle = `سامانه مدیریت و حسابداری نفت و گاز | ${companyInfo.brandName}`;
 const showcaseDescription =
-  "سامانه جامع و تخصصی مدیریت عملیات، مخازن، دیپوها، ناوگان تانکر و حسابداری دو ارزی (دالر و افغانی) برای شرکت‌های نفت و گاز، پترولیوم و جایگاه‌های سوخت در افغانستان.";
+  "سامانه جامع مدیریت عملیات، مخازن، دیپوها، ناوگان تانکر و حسابداری دو ارزی (دالر و افغانی) برای شرکت‌های نفت و گاز، پترولیوم و جایگاه‌های سوخت در افغانستان.";
 
 export const metadata = buildMetadata({
-  fullTitle: `${showcaseTitle} | شرکت نرم افزاری ${companyInfo.brandName}`,
+  fullTitle: showcaseTitle,
   title: showcaseTitle,
   description: showcaseDescription,
   path: "/",
@@ -34,13 +34,13 @@ const softwareApplicationSchema = {
     url: siteUrl,
   },
   featureList: [
-    "حسابداری چند ارزی تخصصی سوخت (USD / AFN)",
+    "حسابداری چند ارزی و تسعیر لحظه‌ای (USD / AFN)",
     "مدیریت مخازن، دیپوها و کنترل افت و تبخیر",
     "تخصیص بارنامه و ناوگان تانکرها",
     "محاسبه بهای تمام شده محموله با کرایه و گمرک",
     "فروش نقدی و اعتباری با کنترل سقف بدهی",
-    "داشبورد هوش تجاری و گزارشات مدیریتی لحظه ای",
-    "کارکرد آفلاین و بدون وابستگی به اینترنت دائم",
+    "داشبورد مدیریتی و گزارشات تحلیلی",
+    "کارکرد آفلاین و همگام‌سازی خودکار",
   ],
 };
 
@@ -54,7 +54,6 @@ export default function Home() {
             name: showcaseTitle,
             description: showcaseDescription,
           }),
-          breadcrumbSchema([{ name: "صفحه اصلی", path: "/" }]),
           serviceSchema({
             path: "/",
             name: "سامانه تخصصی نفت و گاز نواتیک",
@@ -64,12 +63,12 @@ export default function Home() {
               "حسابداری دو ارزی و تسعیر ارز",
               "مدیریت مخازن، دیپو و پایانه‌های سوخت",
               "مدیریت ناوگان تانکرها و ترانزیت مرزی",
-              "محاسبه علمی افت و کسری محموله",
+              "محاسبه افت و کسری محموله",
               "کنترل سقف اعتبار جایگاه‌ها و مشتریان عمده",
               "داشبورد گزارشات مالی و هوش تجاری",
             ],
           }),
-          softwareApplicationSchema
+          softwareApplicationSchema,
         )}
       />
       <HomeClient />

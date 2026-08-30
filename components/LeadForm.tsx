@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useId, useState, type FormEvent, type ReactNode } from "react";
 
 import { buildWhatsappLeadLink } from "@/lib/whatsapp-link";
 
@@ -27,7 +27,6 @@ type Status =
  */
 export default function LeadForm({ source, className, id, children }: LeadFormProps) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
-  const formRef = useRef<HTMLFormElement>(null);
   const statusId = useId();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -91,7 +90,6 @@ export default function LeadForm({ source, className, id, children }: LeadFormPr
   return (
     <form
       id={id}
-      ref={formRef}
       className={className}
       onSubmit={handleSubmit}
       noValidate
