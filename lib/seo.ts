@@ -63,44 +63,6 @@ export const organizationSchema = {
   ],
 };
 
-/**
- * The Herat office is a real, staffed address that clients visit, so the
- * organization is additionally described as a `ProfessionalService`
- * LocalBusiness. It is published on the Herat and contact pages only — the
- * pages where the physical location is genuinely the subject.
- */
-export const localBusinessSchema = {
-  "@type": "ProfessionalService",
-  "@id": `${siteUrl}/herat#localbusiness`,
-  name: `${companyInfo.legalName} — ${companyInfo.addressCity}`,
-  alternateName: companyInfo.brandName,
-  parentOrganization: { "@id": ORGANIZATION_ID },
-  url: `${siteUrl}/herat`,
-  image: `${siteUrl}/images/novatech-logo-social.webp`,
-  logo: `${siteUrl}/images/novatech-logo-social.webp`,
-  telephone: companyInfo.primaryPhoneHref,
-  email: companyInfo.email,
-  address: postalAddress,
-  geo: {
-    "@type": "GeoCoordinates",
-    latitude: companyInfo.geoLatitude,
-    longitude: companyInfo.geoLongitude,
-  },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: companyInfo.openingHours.days,
-      opens: companyInfo.openingHours.opens,
-      closes: companyInfo.openingHours.closes,
-    },
-  ],
-  areaServed: [
-    { "@type": "City", name: "Herat" },
-    { "@type": "Country", name: "Afghanistan" },
-  ],
-  sameAs: [companyInfo.instagramUrl],
-};
-
 export const websiteSchema = {
   "@type": "WebSite",
   "@id": WEBSITE_ID,
@@ -111,30 +73,14 @@ export const websiteSchema = {
   publisher: { "@id": ORGANIZATION_ID },
 };
 
-export type BreadcrumbEntry = { name: string; path: string };
-
-export function breadcrumbSchema(entries: BreadcrumbEntry[]) {
-  return {
-    "@type": "BreadcrumbList",
-    itemListElement: entries.map((entry, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: entry.name,
-      item: `${siteUrl}${entry.path}`,
-    })),
-  };
-}
-
 export function webPageSchema({
   path,
   name,
   description,
-  breadcrumb,
 }: {
   path: string;
   name: string;
   description: string;
-  breadcrumb?: BreadcrumbEntry[];
 }) {
   return {
     "@type": "WebPage",
@@ -145,7 +91,7 @@ export function webPageSchema({
     inLanguage: "fa-AF",
     isPartOf: { "@id": WEBSITE_ID },
     about: { "@id": ORGANIZATION_ID },
-    ...(breadcrumb ? { breadcrumb: breadcrumbSchema(breadcrumb) } : {}),
+    primaryImageOfPage: { "@id": ORGANIZATION_ID },
   };
 }
 
@@ -190,18 +136,6 @@ export function serviceSchema({
   };
 }
 
-export function faqSchema(items: { question: string; answer: string }[]) {
-  return {
-    "@type": "FAQPage",
-    mainEntity: items.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer },
-    })),
-  };
-}
-
-/** Wraps one or more schema nodes in a single `@graph` document. */
 export function graph(...nodes: Record<string, unknown>[]) {
   return {
     "@context": "https://schema.org",

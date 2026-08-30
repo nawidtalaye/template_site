@@ -31,60 +31,68 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: ONE_YEAR,
   },
   experimental: {
-    optimizePackageImports: ["lucide-react", "swiper"],
+    optimizePackageImports: ["lucide-react"],
   },
   async redirects() {
+    // Every legacy route now resolves to the matching section of the single page.
+    const sectionFor: Record<string, string> = {
+      "/oil-and-gas-software": "intro",
+      "/oil-and-gas": "intro",
+      "/petroleum-software": "intro",
+
+      "/fuel-management": "modules",
+      "/software-solutions": "modules",
+      "/business-systems": "modules",
+      "/erp": "modules",
+      "/accounting-software": "modules",
+      "/products": "modules",
+
+      "/database-solutions": "capabilities",
+      "/solutions": "capabilities",
+
+      "/services": "process",
+
+      "/web-design": "showcase",
+      "/graphic-design": "showcase",
+      "/portfolio": "showcase",
+      "/projects": "showcase",
+
+      "/pricing": "plans",
+      "/plans": "plans",
+
+      "/customers": "trust",
+      "/clients": "trust",
+
+      "/about": "about",
+      "/about-us": "about",
+      "/herat": "about",
+      "/team": "team",
+
+      "/contact": "contact",
+      "/contact-us": "contact",
+    };
+
     return [
-      // Core oil & gas legacy pages -> relevant sections
-      { source: "/oil-and-gas-software", destination: "/#intro", statusCode: 301 },
-      { source: "/oil-and-gas", destination: "/#intro", statusCode: 301 },
-      { source: "/petroleum-software", destination: "/#intro", statusCode: 301 },
-      { source: "/fuel-management", destination: "/#features", statusCode: 301 },
-      { source: "/software-solutions", destination: "/#features", statusCode: 301 },
-      { source: "/business-systems", destination: "/#modules", statusCode: 301 },
-      { source: "/database-solutions", destination: "/#capabilities", statusCode: 301 },
-      { source: "/erp", destination: "/#modules", statusCode: 301 },
-      { source: "/accounting-software", destination: "/#modules", statusCode: 301 },
-      { source: "/services", destination: "/#services", statusCode: 301 },
-      { source: "/services/:slug", destination: "/#services", statusCode: 301 },
-      { source: "/products", destination: "/#modules", statusCode: 301 },
-      { source: "/products/:slug", destination: "/#modules", statusCode: 301 },
-      { source: "/solutions", destination: "/#capabilities", statusCode: 301 },
-      { source: "/solutions/:slug", destination: "/#capabilities", statusCode: 301 },
-
-      // Design & portfolio legacy
-      { source: "/web-design", destination: "/#plans", statusCode: 301 },
-      { source: "/graphic-design", destination: "/#showcase", statusCode: 301 },
-      { source: "/portfolio", destination: "/#showcase", statusCode: 301 },
-      { source: "/portfolio/:slug", destination: "/#showcase", statusCode: 301 },
-      { source: "/projects", destination: "/#showcase", statusCode: 301 },
-      { source: "/projects/:slug", destination: "/#showcase", statusCode: 301 },
-
-      // Company pages
-      { source: "/about", destination: "/#about", statusCode: 301 },
-      { source: "/about-us", destination: "/#about", statusCode: 301 },
-      { source: "/herat", destination: "/#about", statusCode: 301 },
-      { source: "/team", destination: "/#team", statusCode: 301 },
-      { source: "/contact", destination: "/#contact", statusCode: 301 },
-      { source: "/contact-us", destination: "/#contact", statusCode: 301 },
-
-      // Pricing & trust
-      { source: "/pricing", destination: "/#plans", statusCode: 301 },
-      { source: "/plans", destination: "/#plans", statusCode: 301 },
-      { source: "/customers", destination: "/#trust", statusCode: 301 },
-      { source: "/clients", destination: "/#trust", statusCode: 301 },
-
-      // Blog removed -> home
-      { source: "/blog", destination: "/", statusCode: 301 },
-      { source: "/blog/:slug", destination: "/", statusCode: 301 },
-      { source: "/news", destination: "/", statusCode: 301 },
-      { source: "/news/:slug", destination: "/", statusCode: 301 },
-      { source: "/articles", destination: "/", statusCode: 301 },
-      { source: "/articles/:slug", destination: "/", statusCode: 301 },
-
-      // Catch-all for any other legacy single pages that might have existed
-      { source: "/fa/:path*", destination: "/", statusCode: 301 },
-      { source: "/en/:path*", destination: "/", statusCode: 301 },
+      ...Object.entries(sectionFor).map(([source, section]) => ({
+        source,
+        destination: `/#${section}`,
+        statusCode: 301 as const,
+      })),
+      // Wildcard legacy detail pages collapse onto the same sections.
+      { source: "/services/:slug", destination: "/#process", statusCode: 301 as const },
+      { source: "/products/:slug", destination: "/#modules", statusCode: 301 as const },
+      { source: "/solutions/:slug", destination: "/#capabilities", statusCode: 301 as const },
+      { source: "/portfolio/:slug", destination: "/#showcase", statusCode: 301 as const },
+      { source: "/projects/:slug", destination: "/#showcase", statusCode: 301 as const },
+      // Editorial content was retired with the multi-page site.
+      { source: "/blog", destination: "/", statusCode: 301 as const },
+      { source: "/blog/:slug", destination: "/", statusCode: 301 as const },
+      { source: "/news", destination: "/", statusCode: 301 as const },
+      { source: "/news/:slug", destination: "/", statusCode: 301 as const },
+      { source: "/articles", destination: "/", statusCode: 301 as const },
+      { source: "/articles/:slug", destination: "/", statusCode: 301 as const },
+      { source: "/fa/:path*", destination: "/", statusCode: 301 as const },
+      { source: "/en/:path*", destination: "/", statusCode: 301 as const },
     ];
   },
 
