@@ -56,6 +56,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <link rel="preload" href="/fonts/IRANYekanXFaNum-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/IRANYekanXFaNum-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        {/* Entrance animations start hidden; without JavaScript they must not stay that way. */}
+        <noscript>
+          <style>{`[data-reveal],[data-reveal-line]>span{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
       </head>
       <body className={`${iranYekan.variable} font-sans antialiased text-slate-900 bg-white flex flex-col min-h-screen`}>
         <a href="#main-content" className="skip-to-content">رفتن به محتوای اصلی</a>
