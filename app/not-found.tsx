@@ -17,8 +17,8 @@ const suggestions = [
 export default function NotFound() {
   return (
     <div className="flex min-h-[70vh] w-full flex-col items-center justify-center gap-6 px-6 py-28 text-center bg-white text-slate-900">
-      <p className="fat text-[80px] leading-none text-[#54dcc6] md:text-[120px]">۴۰۴</p>
-      <h1 className="text-2xl md:text-3xl font-black fat">این صفحه پیدا نشد</h1>
+      <p className="text-[80px] font-black leading-none text-primary md:text-[120px]">۴۰۴</p>
+      <h1 className="text-2xl font-black md:text-3xl">این صفحه پیدا نشد</h1>
       <p className="max-w-xl text-slate-600 leading-8 text-sm sm:text-base">
         صفحه مورد نظر شما به صفحه اصلی سامانه جامع نفت و گاز منتقل شده است. جهت بررسی امکانات و دریافت مشاوره، از پیوندهای زیر استفاده فرمایید.
       </p>

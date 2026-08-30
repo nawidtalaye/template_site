@@ -66,16 +66,16 @@ export const organizationSchema = {
 /**
  * The Herat office is a real, staffed address that clients visit, so the
  * organization is additionally described as a `ProfessionalService`
- * LocalBusiness. It is published on the Herat and contact pages only — the
- * pages where the physical location is genuinely the subject.
+ * LocalBusiness. The single page carries the address and opening hours, so
+ * that is where it is published.
  */
 export const localBusinessSchema = {
   "@type": "ProfessionalService",
-  "@id": `${siteUrl}/herat#localbusiness`,
+  "@id": `${siteUrl}/#localbusiness`,
   name: `${companyInfo.legalName} — ${companyInfo.addressCity}`,
   alternateName: companyInfo.brandName,
   parentOrganization: { "@id": ORGANIZATION_ID },
-  url: `${siteUrl}/herat`,
+  url: siteUrl,
   image: `${siteUrl}/images/novatech-logo-social.webp`,
   logo: `${siteUrl}/images/novatech-logo-social.webp`,
   telephone: companyInfo.primaryPhoneHref,

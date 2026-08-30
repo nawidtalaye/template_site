@@ -1,7 +1,8 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { createContext, useContext, useId, useRef, useState, type FormEvent, type ReactNode } from "react";
 
+import { isValidPhone } from "@/lib/lead";
 import { buildWhatsappLeadLink } from "@/lib/whatsapp-link";
 
 /** Novatech's WhatsApp number. Empty disables the hand-off entirely. */
@@ -12,7 +13,8 @@ type LeadFormProps = {
   source: string;
   className?: string;
   id?: string;
-  children: ReactNode;
+  /** `children` is a render prop so inputs can show the live error state. */
+  children: (state: { pending: boolean; error: string | null; done: boolean }) => ReactNode;
 };
 
 type Status =
@@ -21,13 +23,21 @@ type Status =
   | { kind: "ok"; message: string; whatsappUrl?: string }
   | { kind: "error"; message: string };
 
+type LeadState = { pending: boolean; error: string | null; done: boolean };
+
+const LeadStateContext = createContext<LeadState>({ pending: false, error: null, done: false });
+
+/** Lets the phone field react to the form's validation and submission state. */
+export function useLeadState(): LeadState {
+  return useContext(LeadStateContext);
+}
+
 /**
- * Wraps the hand-styled marketing forms so they actually submit.
- * Markup stays where it is; this only owns submission, state and the live region.
+ * Owns submission, validation and the live region for every lead form.
+ * The markup is written by the sections themselves; this only wires it up.
  */
 export default function LeadForm({ source, className, id, children }: LeadFormProps) {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
-  const formRef = useRef<HTMLFormElement>(null);
   const statusId = useId();
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -36,12 +46,22 @@ export default function LeadForm({ source, className, id, children }: LeadFormPr
 
     const form = event.currentTarget;
     const data = new FormData(form);
+    const phone = String(data.get("phone") ?? "").trim();
+
+    // Client-side check first: it keeps an obviously wrong number off the wire
+    // and lets the input show its invalid state immediately.
+    if (!isValidPhone(phone)) {
+      setStatus({ kind: "error", message: "شماره تماس را به صورت کامل وارد کنید؛ مثال: ۰۷۰۲۰۰۸۴۵۴" });
+      form.querySelector<HTMLInputElement>("input[name='phone']")?.focus();
+      return;
+    }
+
     setStatus({ kind: "sending" });
 
     const lead = {
-      name: String(data.get("name") ?? ""),
-      phone: String(data.get("phone") ?? ""),
-      message: String(data.get("message") ?? ""),
+      name: String(data.get("name") ?? "").trim(),
+      phone,
+      message: String(data.get("message") ?? "").trim(),
     };
     const whatsappUrl = buildWhatsappLeadLink(WHATSAPP_NUMBER, {
       ...lead,
@@ -59,6 +79,7 @@ export default function LeadForm({ source, className, id, children }: LeadFormPr
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...lead,
+          name: lead.name || "درخواست تماس",
           company: data.get("company") ?? "",
           source,
         }),
@@ -72,9 +93,8 @@ export default function LeadForm({ source, className, id, children }: LeadFormPr
         setStatus({
           kind: "ok",
           message: whatsappUrl
-            ? "درخواست شما ثبت شد. برای پیگیری سریع تر، پیام واتساپ را ارسال کنید."
+            ? "درخواست شما ثبت شد. برای پیگیری سریع‌تر، پیام واتساپ را ارسال کنید."
             : payload.message,
-          // Offered as a link too, because a blocker can still eat the tab.
           whatsappUrl: whatsappUrl ?? undefined,
         });
         form.reset();
@@ -88,64 +108,70 @@ export default function LeadForm({ source, className, id, children }: LeadFormPr
     }
   }
 
+  const state: LeadState = {
+    pending: status.kind === "sending",
+    error: status.kind === "error" ? status.message : null,
+    done: status.kind === "ok",
+  };
+
   return (
-    <form
-      id={id}
-      ref={formRef}
-      className={className}
-      onSubmit={handleSubmit}
-      noValidate
-      aria-describedby={statusId}
-      aria-busy={status.kind === "sending"}
-      data-pending={status.kind === "sending" ? "true" : undefined}
-    >
-      {children}
-
-      {/* Honeypot: hidden from users and assistive tech, irresistible to bots. */}
-      <input
-        type="text"
-        name="company"
-        tabIndex={-1}
-        autoComplete="off"
-        aria-hidden="true"
-        className="absolute h-px w-px -m-px overflow-hidden border-0 p-0 opacity-0"
-      />
-
-      <p
-        id={statusId}
-        role="status"
-        aria-live="polite"
-        className={
-          status.kind === "idle"
-            ? "absolute h-px w-px -m-px overflow-hidden p-0"
-            : `w-full text-sm leading-6 ${
-                status.kind === "error"
-                  ? "text-red-600"
-                  : status.kind === "ok"
-                    ? "text-emerald-600"
-                    : "text-gray-500"
-              }`
-        }
+    <LeadStateContext.Provider value={state}>
+      <form
+        id={id}
+        className={className}
+        onSubmit={handleSubmit}
+        noValidate
+        aria-describedby={statusId}
+        aria-busy={state.pending}
       >
-        {status.kind === "sending"
-          ? "در حال ارسال..."
-          : status.kind === "ok" || status.kind === "error"
-            ? status.message
-            : "\u00a0"}
-        {status.kind === "ok" && status.whatsappUrl ? (
-          <>
-            {" "}
-            <a
-              href={status.whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              ارسال در واتساپ
-            </a>
-          </>
-        ) : null}
-      </p>
-    </form>
+        {children(state)}
+
+        {/* Honeypot: hidden from users and assistive tech, irresistible to bots. */}
+        <input
+          type="text"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="absolute size-px -m-px overflow-hidden border-0 p-0 opacity-0"
+        />
+
+        <p
+          id={statusId}
+          role="status"
+          aria-live="polite"
+          className={
+            status.kind === "idle"
+              ? "absolute size-px -m-px overflow-hidden p-0"
+              : `mt-3 w-full text-[12px] leading-6 ${
+                  status.kind === "error"
+                    ? "text-rose-200 sm:text-rose-600"
+                    : status.kind === "ok"
+                      ? "text-emerald-200 sm:text-emerald-600"
+                      : "text-white/70 sm:text-slate-500"
+                }`
+          }
+        >
+          {status.kind === "sending"
+            ? "در حال ارسال…"
+            : status.kind === "ok" || status.kind === "error"
+              ? status.message
+              : " "}
+          {status.kind === "ok" && status.whatsappUrl ? (
+            <>
+              {" "}
+              <a
+                href={status.whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold underline underline-offset-4"
+              >
+                ارسال در واتساپ
+              </a>
+            </>
+          ) : null}
+        </p>
+      </form>
+    </LeadStateContext.Provider>
   );
 }

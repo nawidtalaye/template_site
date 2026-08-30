@@ -12,6 +12,11 @@ export type LeadResult =
 /** Afghan mobile number, with 0, +93, or 93 prefix and Persian digits. */
 const PHONE_RE = /^(?:(?:\+?93)?7\d{8}|07\d{8})$/;
 
+/** True for a number the team can actually call back. Used by the forms too. */
+export function isValidPhone(raw: string): boolean {
+  return PHONE_RE.test(toLatinDigits(String(raw ?? "")).replace(/[\s\-()]/g, ""));
+}
+
 const PERSIAN_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
 const ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
 
@@ -33,13 +38,15 @@ export function validateLead(raw: unknown): LeadResult & { data?: LeadPayload } 
   const message = String(body.message ?? "").trim();
   const source = String(body.source ?? "unknown").slice(0, 64);
 
-  if (name.length < 3) {
+  // Phone-only leads (the hero and the closing call to action) are valid:
+  // the team calls the number back, so a name is optional.
+  if (name.length > 0 && name.length < 3) {
     return { ok: false, message: "نام و نام خانوادگی را کامل وارد کنید.", field: "name" };
   }
   if (name.length > 120) {
     return { ok: false, message: "نام وارد شده بیش از حد طولانی است.", field: "name" };
   }
-  if (!PHONE_RE.test(phone)) {
+  if (!isValidPhone(phone)) {
     return { ok: false, message: "شماره تماس معتبر نیست.", field: "phone" };
   }
   if (message.length > 2000) {

@@ -1,37 +1,82 @@
 "use client";
 
-import { CheckCircle, DollarSign, Headset, Lock, PieChart, RefreshCw, Server, ShieldCheck } from "lucide-react";
-import { showcaseContent } from "@/lib/showcase-content";
+import Image from "next/image";
+import { ArrowLeft } from "lucide-react";
 
-const benefitIcons = [CheckCircle, DollarSign, ShieldCheck, Server, RefreshCw, PieChart, Lock, Headset];
+import Reveal from "@/components/motion/Reveal";
+import Parallax from "@/components/motion/Parallax";
+import SectionHeading from "@/components/ui/SectionHeading";
+import { benefits, media } from "@/lib/showcase-content";
 
 export default function Benefits() {
   return (
-    <section id="benefits" className="py-16 lg:py-24 bg-slate-50 text-slate-900 relative overflow-hidden border-y border-slate-100" aria-labelledby="benefits-heading">
-      <div className="absolute inset-0 bg-grid-light opacity-30 pointer-events-none" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-[#0f766e] text-xs font-bold mb-4 shadow-sm">مزایای استراتژیک برای سازمان</div>
-          <h2 id="benefits-heading" className="text-2xl sm:text-3xl md:text-[36px] font-black fat leading-snug text-slate-900 mb-4">چرا شرکت‌های برتر انرژی سامانه نواتیک را انتخاب می‌کنند؟</h2>
-          <p className="text-slate-600 text-sm sm:text-[15px] leading-relaxed">دستیابی به حداکثر سودآوری، کنترل هدررفت فرآورده‌ها و شفافیت مطلق در گزارش‌های مالی</p>
-        </div>
+    <section
+      id="benefits"
+      className="relative bg-slate-50/60 py-20 lg:py-28"
+      aria-labelledby="benefits-heading"
+    >
+      <div className="mx-auto max-w-7xl px-5 sm:px-8">
+        <SectionHeading index="۰۸" eyebrow={benefits.eyebrow} title={benefits.title} lead={benefits.lead} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-          {showcaseContent.benefits.map((benefit, index) => {
-            const Icon = benefitIcons[index % benefitIcons.length];
-            return (
-              <div key={benefit.title} className="group p-6 rounded-[20px] bg-white border border-slate-200 hover:border-[#54dcc6]/40 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)] hover:-translate-y-1 transition-all flex flex-col justify-between light-card-hover">
-                <div>
-                  <div className="size-11 rounded-xl bg-[#54dcc6]/10 border border-[#54dcc6]/20 text-[#0f766e] flex items-center justify-center mb-4 group-hover:bg-[#54dcc6] group-hover:text-slate-900 transition-colors">
-                    <Icon className="size-5" />
+        <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:gap-16">
+          {/* تصویر */}
+          <div className="lg:col-span-5">
+            <Reveal y={40} duration={1000} className="lg:sticky lg:top-28 lg:self-start">
+              <Parallax distance={-28}>
+                <figure className="overflow-hidden rounded-[26px] bg-slate-100">
+                  <Image
+                    src={media.benefitsImage}
+                    alt="اپراتور در حال بازدید و اندازه‌گیری تجهیزات دیپو"
+                    width={900}
+                    height={1125}
+                    sizes="(min-width: 1024px) 38vw, 92vw"
+                    className="h-auto w-full object-cover"
+                  />
+                </figure>
+              </Parallax>
+              <figcaption className="mt-4 flex items-center justify-between gap-4 border-t border-slate-200 pt-4">
+                <span className="text-[12.5px] font-bold text-slate-800">{benefits.imageCaption}</span>
+                <span className="text-[11.5px] text-slate-500">{benefits.imageNote}</span>
+              </figcaption>
+            </Reveal>
+          </div>
+
+          {/* ردیف‌های مزایا */}
+          <div className="lg:col-span-7">
+            <ul className="flex flex-col border-t border-slate-200">
+              {benefits.items.map((item, index) => (
+                <Reveal
+                  as="li"
+                  key={item.number}
+                  delay={index * 70}
+                  y={24}
+                  duration={800}
+                  className="group border-b border-slate-200 py-7"
+                >
+                  <div className="flex items-start justify-between gap-6">
+                    <div className="flex gap-5">
+                      <span className="num mt-1 text-[12px] font-bold text-primary-ink">{item.number}</span>
+                      <div>
+                        <h3 className="text-[17px] font-black leading-snug text-slate-900 transition-colors duration-300 group-hover:text-primary-ink">
+                          {item.title}
+                        </h3>
+                        <p className="mt-2 max-w-lg text-[13.5px] leading-7 text-slate-500">{item.text}</p>
+                      </div>
+                    </div>
+                    <span className="hidden shrink-0 items-center gap-2 sm:flex">
+                      <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-slate-500 ring-1 ring-slate-200">
+                        {item.metric}
+                      </span>
+                      <ArrowLeft
+                        className="size-4 -translate-x-2 text-primary opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                        aria-hidden="true"
+                      />
+                    </span>
                   </div>
-                  <h3 className="text-[15px] font-bold text-slate-900 group-hover:text-[#0f766e] transition-colors mb-2">{benefit.title}</h3>
-                  <p className="text-[13px] text-slate-600 leading-relaxed">{benefit.desc}</p>
-                </div>
-                <div className="mt-5 pt-4 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-[#0f766e] font-bold"><span>تأثیر تضمین شده نواتیک</span></div>
-              </div>
-            );
-          })}
+                </Reveal>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>

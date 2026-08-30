@@ -1,12 +1,13 @@
 import HomeClient from "./HomeClient";
 import JsonLd from "@/components/JsonLd";
 import { buildMetadata } from "@/lib/metadata";
-import { breadcrumbSchema, graph, serviceSchema, webPageSchema } from "@/lib/seo";
+import { breadcrumbSchema, graph, localBusinessSchema, serviceSchema, webPageSchema } from "@/lib/seo";
+import { modules } from "@/lib/showcase-content";
 import { companyInfo, siteUrl } from "@/lib/site-content";
 
 const showcaseTitle = `سامانه مدیریت و حسابداری نفت و گاز | ${companyInfo.brandName}`;
 const showcaseDescription =
-  "سامانه جامع و تخصصی مدیریت عملیات، مخازن، دیپوها، ناوگان تانکر و حسابداری دو ارزی (دالر و افغانی) برای شرکت‌های نفت و گاز، پترولیوم و جایگاه‌های سوخت در افغانستان.";
+  "سامانه یکپارچه مدیریت عملیات، مخازن و دیپوها، ناوگان تانکر و حسابداری دو ارزی (دالر و افغانی) برای شرکت‌های نفت و گاز، پترولیوم و جایگاه‌های سوخت در افغانستان.";
 
 export const metadata = buildMetadata({
   fullTitle: `${showcaseTitle} | شرکت نرم افزاری ${companyInfo.brandName}`,
@@ -18,9 +19,9 @@ export const metadata = buildMetadata({
 const softwareApplicationSchema = {
   "@type": "SoftwareApplication",
   "@id": `${siteUrl}/#software-application`,
-  name: "سامانه مدیریت و حسابداری نفت و گاز نواتیک",
+  name: `سامانه مدیریت و حسابداری نفت و گاز ${companyInfo.brandName}`,
   applicationCategory: "BusinessApplication",
-  operatingSystem: "Web, Windows, Android, iOS, Cloud & On-Premise",
+  operatingSystem: "Web, Windows, Android, Cloud & On-Premise",
   description: showcaseDescription,
   offers: {
     "@type": "Offer",
@@ -34,13 +35,13 @@ const softwareApplicationSchema = {
     url: siteUrl,
   },
   featureList: [
-    "حسابداری چند ارزی تخصصی سوخت (USD / AFN)",
-    "مدیریت مخازن، دیپوها و کنترل افت و تبخیر",
-    "تخصیص بارنامه و ناوگان تانکرها",
-    "محاسبه بهای تمام شده محموله با کرایه و گمرک",
+    "حسابداری دو ارزی (دالر / افغانی) با تسعیر روزانه",
+    "مدیریت مخازن، دیپوها و کنترل افت و کسری",
+    "تخصیص بارنامه، ناوگان تانکرها و باسکول مبدأ و مقصد",
+    "تسهیم هزینه و محاسبه بهای تمام‌شده هر لیتر",
     "فروش نقدی و اعتباری با کنترل سقف بدهی",
-    "داشبورد هوش تجاری و گزارشات مدیریتی لحظه ای",
-    "کارکرد آفلاین و بدون وابستگی به اینترنت دائم",
+    "داشبورد مدیریتی و گزارش‌های لحظه‌ای",
+    "کارکرد آفلاین در دیپوهای دور از دسترس",
   ],
 };
 
@@ -57,19 +58,13 @@ export default function Home() {
           breadcrumbSchema([{ name: "صفحه اصلی", path: "/" }]),
           serviceSchema({
             path: "/",
-            name: "سامانه تخصصی نفت و گاز نواتیک",
+            name: `سامانه تخصصی نفت و گاز ${companyInfo.brandName}`,
             description: showcaseDescription,
             serviceType: "Petroleum & Energy ERP and Accounting Software",
-            offerCatalog: [
-              "حسابداری دو ارزی و تسعیر ارز",
-              "مدیریت مخازن، دیپو و پایانه‌های سوخت",
-              "مدیریت ناوگان تانکرها و ترانزیت مرزی",
-              "محاسبه علمی افت و کسری محموله",
-              "کنترل سقف اعتبار جایگاه‌ها و مشتریان عمده",
-              "داشبورد گزارشات مالی و هوش تجاری",
-            ],
+            offerCatalog: modules.map((module) => module.name),
           }),
-          softwareApplicationSchema
+          softwareApplicationSchema,
+          localBusinessSchema,
         )}
       />
       <HomeClient />
