@@ -9,18 +9,20 @@ import { useInView } from "@/components/motion/useInView";
 import { prefersReducedMotion } from "@/components/motion/useScrollVar";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { mockViews } from "@/components/ui/mockups/views";
+import { toPersianDigits } from "@/lib/format";
 import { areas, costExample, headings } from "@/lib/showcase-content";
 import type { AreaItem } from "@/lib/showcase-content";
 
 const AUTOPLAY_MS = 7000;
 
 /**
- * «آنچه این سامانه مدیریت می‌کند»
+ * «آنچه می‌سازیم»
  *
- * همان زبانِ بخشِ نمونه‌کارهای نواتیک: یک فهرستِ شماره‌دار در یک سو و یک صحنه
- * بزرگ در سوی دیگر. ردیفِ فعال با رنگ، اندازه و یک خطِ کوتاه خودش را نشان
- * می‌دهد؛ بقیه عقب می‌نشینند. تصویر با یک ماسکِ نرم جابه‌جا می‌شود و قطعه‌ای
- * از رابط نرم‌افزار روی آن می‌نشیند.
+ * همان زبانِ بخشِ خدمات نخبه‌ی نواتیک است: یک صحنه بزرگ و یک فهرست شماره‌دار که
+ * با انتخاب هر بخش جابه‌جا می‌شود. ردیفِ فعال با اندازه، رنگ و توضیحِ بازِ نرم
+ * خودش را نشان می‌دهد؛ بقیه با فاصله و وزنِ کمتر کنار می‌نشینند. تصویر با ماسکِ
+ * نرم عوض می‌شود و همزمان یک شمارنده «۰۱ / ۰۶» و خطِ پیشرفت روی صحنه به‌روز
+ * می‌شود.
  */
 export default function Areas() {
   const [active, setActive] = useState(0);
@@ -76,9 +78,9 @@ export default function Areas() {
           headingId="areas-heading"
           signature
           index="۰۲"
-          eyebrow="نواتیک / نفت و گاز"
+          eyebrow="نواتیک / خدمات منتخب"
           titleLines={headings.areas}
-          lead="روی هر بخش بایستید تا توضیح و نمای آن را ببینید؛ این شش بخش، کل جریان کار یک شرکت سوختی را پوشش می‌دهد."
+          lead="روی هر بخش بایستید تا تصویر، توضیح و رابط نمونه‌ی همان حوزه را ببینید؛ این شش بخش، کل جریان کار یک شرکت سوختی را پوشش می‌دهد."
         />
 
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:gap-14">
@@ -215,15 +217,25 @@ export default function Areas() {
                     />
 
                     <span
-                      className="num absolute left-5 top-4 text-[13px] font-black text-white/85 [text-shadow:0_1px_12px_rgba(2,6,23,0.6)]"
+                      className="absolute left-5 top-4 flex items-center gap-2 rounded-full bg-slate-950/60 px-3 py-1.5 text-white backdrop-blur-sm [text-shadow:0_1px_12px_rgba(2,6,23,0.6)]"
                       aria-hidden="true"
                     >
-                      {area.number}
+                      <span className="num text-[12px] font-black">{area.number}</span>
+                      <span className="h-3 w-px bg-white/25" />
+                      <span className="num text-[11px] font-bold text-white/75">{toPersianDigits(areas.length)}</span>
                     </span>
 
-                    <span className="absolute bottom-4 right-5 flex items-center gap-2.5 text-[12px] font-bold text-white [text-shadow:0_1px_12px_rgba(2,6,23,0.6)]">
+                    <span className="absolute bottom-6 right-5 flex items-center gap-2.5 text-[12px] font-bold text-white [text-shadow:0_1px_12px_rgba(2,6,23,0.6)]">
                       <span className="h-px w-6 bg-primary" aria-hidden="true" />
                       {area.caption}
+                    </span>
+
+                    {/* خط پیشرفتِ صحنه — با تغییر بخش، آرام پر می‌شود */}
+                    <span className="absolute inset-x-5 bottom-4 block h-px overflow-hidden bg-white/20" aria-hidden="true">
+                      <span
+                        className="block h-full origin-right bg-primary transition-transform duration-[900ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)]"
+                        style={{ transform: `scaleX(${(active + 1) / areas.length})` }}
+                      />
                     </span>
                   </div>
                 </Parallax>
