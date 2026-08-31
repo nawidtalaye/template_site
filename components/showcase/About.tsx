@@ -13,7 +13,8 @@ export default function About() {
   return (
     <section id="about" className="relative overflow-hidden bg-white py-20 lg:py-28" aria-labelledby="about-heading">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeading index="۱۱" eyebrow={about.eyebrow} title={about.title} lead="نرم‌افزار را همان تیمی پشتیبانی می‌کند که آن را ساخته است." />
+        <SectionHeading index="۱۱" eyebrow={about.eyebrow} title={about.title} lead="نرم‌افزار را همان تیمی پشتیبانی می‌کند که آن را ساخته است." headingId="about-heading"
+          signature />
 
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">

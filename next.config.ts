@@ -33,7 +33,7 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: ONE_YEAR,
   },
   experimental: {
-    optimizePackageImports: ["lucide-react", "swiper"],
+    optimizePackageImports: ["lucide-react"],
   },
   async redirects() {
     // The site is a single page: every legacy service URL now lands on the
@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
       { source: "/oil-and-gas", destination: "/#industry", statusCode: 301 },
       { source: "/petroleum-software", destination: "/#intro", statusCode: 301 },
       { source: "/fuel-management", destination: "/#modules", statusCode: 301 },
-      { source: "/software-solutions", destination: "/#features", statusCode: 301 },
+      { source: "/software-solutions", destination: "/#areas", statusCode: 301 },
       { source: "/business-systems", destination: "/#modules", statusCode: 301 },
       { source: "/database-solutions", destination: "/#showcase", statusCode: 301 },
       { source: "/erp", destination: "/#modules", statusCode: 301 },

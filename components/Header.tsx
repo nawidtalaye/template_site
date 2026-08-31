@@ -67,7 +67,7 @@ export default function Header() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         dark
-          ? "border-b border-transparent bg-gradient-to-b from-slate-950/45 to-transparent py-4"
+          ? "border-b border-transparent bg-gradient-to-b from-slate-950/70 via-slate-950/30 to-transparent py-4"
           : "border-b border-slate-200/80 bg-white/85 py-2.5 backdrop-blur-xl"
       }`}
     >
@@ -93,7 +93,7 @@ export default function Header() {
           <span className="hidden flex-col leading-tight sm:flex">
             <span
               className={`text-[13px] font-black transition-colors ${
-                dark ? "text-white" : "text-slate-900"
+                dark ? "text-white [text-shadow:0_1px_10px_rgba(2,6,23,0.55)]" : "text-slate-900"
               }`}
             >
               نفت و گاز {companyInfo.brandName}

@@ -14,6 +14,7 @@ export default function Statistics() {
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading
+          headingId="statistics-heading"
           index="۰۵"
           eyebrow="آمار"
           title="اعدادی که تصویر کلی را نشان می‌دهند"

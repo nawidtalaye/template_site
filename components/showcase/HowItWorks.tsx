@@ -13,7 +13,7 @@ export default function HowItWorks() {
       aria-labelledby="process-heading"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeading index="۰۶" eyebrow={process.eyebrow} title={process.title} lead={process.lead} />
+        <SectionHeading index="۰۶" eyebrow={process.eyebrow} title={process.title} lead={process.lead} headingId="process-heading" />
 
         <ScrollProgress from={0.9} to={0.45} className="mt-16 lg:mt-24">
           <ol className="relative flex flex-col gap-10 lg:flex-row lg:gap-0">

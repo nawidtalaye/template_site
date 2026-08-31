@@ -13,7 +13,8 @@ export default function Customers() {
       aria-labelledby="customers-heading"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeading index="۱۰" eyebrow={customers.eyebrow} title={customers.title} lead={customers.lead} />
+        <SectionHeading index="۱۰" eyebrow={customers.eyebrow} title={customers.title} lead={customers.lead} headingId="customers-heading"
+          signature />
 
         {/* نشان‌های انتزاعی — آماده جایگزینی با لوگوی واقعی */}
         <div className="mt-14 grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">

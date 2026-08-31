@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 const suggestions = [
   { href: "/", label: "صفحه اصلی سامانه" },
-  { href: "/#features", label: "امکانات نرم‌افزار" },
+  { href: "/#areas", label: "بخش‌های سامانه" },
   { href: "/#modules", label: "ماژول‌های تخصصی" },
   { href: "/#plans", label: "پلن‌ها و تعرفه‌ها" },
   { href: "/#contact", label: "تماس و درخواست دمو" },

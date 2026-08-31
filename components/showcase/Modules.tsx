@@ -40,6 +40,7 @@ export default function Modules() {
     <section id="modules" className="relative bg-white py-20 lg:py-28" aria-labelledby="modules-heading">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading
+          headingId="modules-heading"
           index="۰۳"
           eyebrow="ماژول‌ها"
           titleLines={headings.modules}
@@ -118,26 +119,24 @@ export default function Modules() {
                       <span className="num text-[12px] font-bold text-primary-ink">ماژول {activeModule.number}</span>
                       <h3 className="mt-2 text-[24px] font-black text-slate-900 sm:text-[28px]">{activeModule.name}</h3>
                     </div>
-                    <span className="rounded-full border border-slate-200 px-3.5 py-1.5 text-[11px] font-bold text-slate-500">
-                      {activeModule.tag}
-                    </span>
+                    <span className="text-[11.5px] font-bold text-slate-400">{activeModule.tag}</span>
                   </div>
 
                   <p className="mt-5 text-[14px] leading-8 text-slate-600">{activeModule.summary}</p>
 
-                  <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
+                  <ul className="mt-6 grid gap-y-2.5 sm:grid-cols-2 sm:gap-x-8">
                     {activeModule.capabilities.map((capability) => (
                       <li
                         key={capability}
-                        className="flex items-center gap-2.5 rounded-xl bg-slate-50 px-3.5 py-2.5 text-[13px] font-medium text-slate-700"
+                        className="flex items-center gap-2.5 text-[13px] font-medium text-slate-600"
                       >
-                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                        <span className="h-1 w-1 shrink-0 rounded-full bg-primary" aria-hidden="true" />
                         {capability}
                       </li>
                     ))}
                   </ul>
 
-                  <div className="mt-6 flex items-center justify-between gap-4 rounded-2xl border border-slate-200/80 bg-white px-5 py-3.5">
+                  <div className="mt-7 flex items-baseline justify-between gap-4 border-t border-slate-200 pt-4">
                     <span className="text-[12px] text-slate-500">{activeModule.kpi.label}</span>
                     <span className="num text-[15px] font-black text-primary-ink">{activeModule.kpi.value}</span>
                   </div>

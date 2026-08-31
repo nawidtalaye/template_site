@@ -53,9 +53,14 @@
     background-color: #ffffff;
     color: var(--color-text-dark);
     font-family: var(--font-iranyekan);
+    /* همان تنظیماتی که نواتیک برای متن فارسی استفاده می‌کند:
+       ارقام فارسی، کرنینگ روشن و ارتفاع خطِ آزاد برای خواندن طولانی. */
+    font-size: 15px;
+    line-height: 1.9;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "kern";
   }
 
   h1,
@@ -65,12 +70,21 @@
   h5,
   h6 {
     font-weight: 700;
+    line-height: 1.45;
+    /* فارسی به فاصله‌ی حروف نیاز ندارد؛ ترازِ بصری با وزن و اندازه است */
+    letter-spacing: 0;
+    text-wrap: balance;
   }
 
-  /* Persian figures and Latin figures share one tabular rhythm in tables */
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Persian figures and Latin figures share one tabular rhythm in tables. */
   .num {
     font-variant-numeric: tabular-nums;
-    font-feature-settings: "ss01";
+    font-feature-settings: "ss01", "kern";
+    letter-spacing: 0;
   }
 
   ::selection {
@@ -176,26 +190,35 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero — one localised scrim so the refinery footage stays visible     */
+/* Hero — only a short veil behind the text, so the footage stays lit   */
 /* ------------------------------------------------------------------ */
-.hero-scrim {
-  background-image: linear-gradient(
-    to left,
-    rgba(2, 6, 23, 0.92) 0%,
-    rgba(2, 6, 23, 0.74) 24%,
-    rgba(2, 6, 23, 0.38) 48%,
-    rgba(2, 6, 23, 0.12) 72%,
-    rgba(2, 6, 23, 0) 100%
-  );
+.hero-veil {
+  background-image:
+    /* راستِ کادر، جایی که متن ایستاده (RTL) */
+    linear-gradient(
+      to left,
+      rgba(2, 6, 23, 0.66) 0%,
+      rgba(2, 6, 23, 0.4) 24%,
+      rgba(2, 6, 23, 0.14) 50%,
+      rgba(2, 6, 23, 0) 76%
+    ),
+    /* بالا برای هدر و پایین برای نشانگر اسکرول */
+      linear-gradient(
+        to bottom,
+        rgba(2, 6, 23, 0.42) 0%,
+        rgba(2, 6, 23, 0.06) 22%,
+        rgba(2, 6, 23, 0) 58%,
+        rgba(2, 6, 23, 0.4) 100%
+      );
 }
 @media (max-width: 900px) {
-  .hero-scrim {
+  .hero-veil {
     background-image: linear-gradient(
       to top,
-      rgba(2, 6, 23, 0.96) 0%,
-      rgba(2, 6, 23, 0.9) 38%,
-      rgba(2, 6, 23, 0.72) 66%,
-      rgba(2, 6, 23, 0.46) 100%
+      rgba(2, 6, 23, 0.78) 0%,
+      rgba(2, 6, 23, 0.6) 34%,
+      rgba(2, 6, 23, 0.34) 68%,
+      rgba(2, 6, 23, 0.22) 100%
     );
   }
 }

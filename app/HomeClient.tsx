@@ -1,9 +1,9 @@
 "use client";
 
 import About from "@/components/showcase/About";
+import Areas from "@/components/showcase/Areas";
 import Benefits from "@/components/showcase/Benefits";
 import Customers from "@/components/showcase/Customers";
-import Features from "@/components/showcase/Features";
 import FinalCta from "@/components/showcase/FinalCta";
 import Hero from "@/components/showcase/Hero";
 import HowItWorks from "@/components/showcase/HowItWorks";
@@ -24,7 +24,7 @@ export default function HomeClient() {
     <div className="w-full overflow-x-clip">
       <Hero />
       <Intro />
-      <Features />
+      <Areas />
       <Modules />
       <Industry />
       <Statistics />
