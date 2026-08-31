@@ -13,6 +13,7 @@ export default function Intro() {
     <section id="intro" className="relative overflow-hidden bg-white py-20 lg:py-28" aria-labelledby="intro-heading">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading
+          headingId="intro-heading"
           index="۰۱"
           eyebrow={intro.eyebrow}
           title={intro.title}

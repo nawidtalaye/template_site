@@ -30,6 +30,7 @@ export default function Industry() {
 
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading
+          headingId="industry-heading"
           index="۰۴"
           eyebrow={industry.eyebrow}
           title={industry.title}

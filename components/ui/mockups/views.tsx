@@ -398,15 +398,3 @@ export const mockViews = {
 } as const;
 
 export type MockKey = keyof typeof mockViews;
-
-export const mockTitles: Record<MockKey, string> = {
-  dashboard: "داشبورد مدیریتی",
-  ledger: "دفتر کل و اسناد مالی",
-  tanks: "مخازن و انبار",
-  invoices: "فاکتورها و صورت‌حساب",
-  purchases: "خرید و واردات",
-  waybills: "بارنامه‌ها و ناوگان",
-  expenses: "هزینه‌ها و مراکز هزینه",
-  report: "گزارشات",
-  analytics: "تحلیل داده",
-};

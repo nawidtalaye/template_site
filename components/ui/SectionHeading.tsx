@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 
 import Reveal, { RevealLine } from "@/components/motion/Reveal";
@@ -10,8 +11,12 @@ type SectionHeadingProps = {
   lead?: string;
   tone?: "light" | "dark";
   className?: string;
+  /** id اختیاری برای تیتر؛ هر بخش با aria-labelledby به همین id اشاره می‌کند. */
+  headingId?: string;
   /** Splits the headline into masked lines that rise into place. */
   titleLines?: string[];
+  /** امضای دست‌نویس برند — همان نشانه‌ای که نواتیک زیر عنوان بخش‌ها می‌گذارد. */
+  signature?: boolean;
 };
 
 export default function SectionHeading({
@@ -21,7 +26,9 @@ export default function SectionHeading({
   lead,
   tone = "light",
   className = "",
+  headingId,
   titleLines,
+  signature = false,
 }: SectionHeadingProps) {
   const dark = tone === "dark";
 
@@ -45,6 +52,7 @@ export default function SectionHeading({
         </span>
         {titleLines ? (
           <h2
+            id={headingId}
             className={`mt-4 text-[26px] font-black leading-[1.4] sm:text-[32px] lg:text-[38px] ${
               dark ? "text-white" : "text-slate-900"
             }`}
@@ -57,6 +65,7 @@ export default function SectionHeading({
           </h2>
         ) : (
           <h2
+            id={headingId}
             className={`mt-4 text-[26px] font-black leading-[1.4] sm:text-[32px] lg:text-[38px] ${
               dark ? "text-white" : "text-slate-900"
             }`}
@@ -64,6 +73,17 @@ export default function SectionHeading({
             {title}
           </h2>
         )}
+
+        {signature && !dark ? (
+          <Image
+            src="/images/signature.jpg"
+            alt=""
+            width={129}
+            height={19}
+            aria-hidden="true"
+            className="mt-5 h-[19px] w-[129px] object-contain opacity-70"
+          />
+        ) : null}
       </div>
       {lead ? (
         <p
