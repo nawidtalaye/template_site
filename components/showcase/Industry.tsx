@@ -40,7 +40,7 @@ export default function Industry() {
 
         {/* زنجیره حرکت محموله */}
         <Reveal y={28} delay={80} className="mt-14 lg:mt-20">
-          <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur-sm sm:p-8">
+          <div className="border-t border-white/15 pt-7">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="text-[12px] font-bold text-primary">{industry.flowCaption}</span>
               <span className="text-[11px] text-white/40">هر مرحله مستند خودش را دارد</span>
