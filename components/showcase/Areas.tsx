@@ -4,39 +4,56 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 import Reveal from "@/components/motion/Reveal";
-import { useInView } from "@/components/motion/useInView";
-import { prefersReducedMotion } from "@/components/motion/useScrollVar";
+import { prefersReducedMotion, rangeProgress, useScrollVar } from "@/components/motion/useScrollVar";
+import CostCalculator from "@/components/showcase/CostCalculator";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { areas, costExample, headings } from "@/lib/showcase-content";
+import { areas, headings } from "@/lib/showcase-content";
 
 /**
  * «شش بخشی که این سامانه هر روز مدیریت می‌کند»
  *
- * زبان طراحیِ همان بخشِ «نواتیک / خدمات منتخب — آنچه می‌سازیم» است: یک نوار
- * افقیِ بی‌وقفه از کارت‌های شماره‌دار که عکس واقعی هر بخش را نشان می‌دهند.
- * روی هر کارت فقط شماره، دسته و عنوان می‌نشیند — بدون توضیح اضافه، دقیقاً
- * به همان اندازه‌ی مینیمال. با هاور موس یا لمسِ گوشی، چرخش برای مکث و دیدنِ
- * بهتر متوقف می‌شود و با برداشتن دست دوباره از همان‌جا ادامه می‌یابد.
+ * نوار افقی به اسکرول خود صفحه گره خورده است: با پایین آمدن کاربر، کارت‌ها
+ * از یک سو وارد و به‌آرامی به سوی دیگر می‌روند — اما حرکت محدود است؛ کارت
+ * اول از لبه شروع می‌کند و کارت آخر دقیقاً در لبه مقابل می‌ایستد. بنابراین
+ * هیچ لحظه‌ای وجود ندارد که محتوا «از صفحه بیرون رفته» به نظر برسد.
+ * روی موبایل و در حالت کاهش حرکت، همان نوار با لمس ورق می‌خورد.
  */
 export default function Areas() {
-  const [sectionRef, inView] = useInView<HTMLDivElement>({ threshold: 0.15, once: false });
-  const [paused, setPaused] = useState(false);
-  const [reduced, setReduced] = useState(false);
+  /** پیشرفت عبور بخش از دید (۰ تا ۱) — روی --p نوشته می‌شود */
+  const railRef = useScrollVar<HTMLDivElement>(rangeProgress(0.95, 0.12));
   const trackRef = useRef<HTMLUListElement>(null);
+  const [overflow, setOverflow] = useState(0);
+  const [linked, setLinked] = useState(false);
 
+  // فقط روی صفحه‌های بزرگ و بدون «کاهش حرکت»، نوار به اسکرول صفحه وصل می‌شود
   useEffect(() => {
-    setReduced(prefersReducedMotion());
+    const query = window.matchMedia("(min-width: 1024px)");
+    const update = () => setLinked(query.matches && !prefersReducedMotion());
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
   }, []);
 
-  // نوار را دوبار پشت‌سرهم می‌چینیم تا چرخش بدون درز و پرش دیده شود
-  const loop = [...areas, ...areas];
+  // اندازه اضافه‌ی نوار نسبت به قاب — دامنه حرکت همین است و نه بیشتر
+  useEffect(() => {
+    const rail = railRef.current;
+    const track = trackRef.current;
+    if (!rail || !track) return;
+
+    const measure = () => setOverflow(Math.max(0, track.scrollWidth - rail.clientWidth));
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(rail);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [railRef, linked]);
 
   return (
     <section
       id="areas"
       className="relative overflow-hidden bg-white py-20 lg:py-28"
       aria-labelledby="areas-heading"
-      ref={sectionRef}
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading
@@ -50,42 +67,39 @@ export default function Areas() {
       </div>
 
       {/* ---------------------------------------------------------- */}
-      {/* نوار افقیِ کارت‌ها — بدون قاب کناری، تا لبه‌ی صفحه ادامه دارد */}
+      {/* نوار افقی کارت‌ها — حرکتِ محدود و گره‌خورده به اسکرول صفحه   */}
       {/* ---------------------------------------------------------- */}
       <Reveal y={36} duration={1000} className="mt-14 lg:mt-20">
         <div
-          className="group/rail relative"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onTouchStart={() => setPaused(true)}
-          onTouchEnd={() => setPaused(false)}
-          onFocus={() => setPaused(true)}
-          onBlur={() => setPaused(false)}
+          ref={railRef}
+          className={`relative ${
+            linked ? "overflow-hidden" : "snap-x snap-mandatory overflow-x-auto no-scrollbar scroll-px-5 sm:scroll-px-8"
+          }`}
+          style={{ "--rail-overflow": `${overflow}px` } as React.CSSProperties}
         >
           {/* پرده‌ی نرم دو سوی نوار، تا برش کارت‌ها لبه‌ی تیز نداشته باشد */}
           <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-white to-transparent sm:w-24"
+            className="pointer-events-none absolute inset-y-0 right-0 z-10 hidden w-10 bg-gradient-to-l from-white to-transparent lg:block sm:w-24"
             aria-hidden="true"
           />
           <div
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-white to-transparent sm:w-24"
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-10 bg-gradient-to-r from-white to-transparent lg:block sm:w-24"
             aria-hidden="true"
           />
 
           <ul
             ref={trackRef}
-            className="areas-track flex w-max list-none gap-5 px-5 sm:gap-6 sm:px-8"
+            className="flex w-max list-none gap-5 px-5 pb-10 pt-3 sm:gap-6 sm:px-8"
             style={
-              {
-                animationPlayState: paused || reduced || !inView ? "paused" : "running",
-              } as React.CSSProperties
+              linked
+                ? { transform: "translate3d(calc(var(--p, 0) * var(--rail-overflow, 0px)), 0, 0)" }
+                : undefined
             }
           >
-            {loop.map((item, index) => (
+            {areas.map((item, index) => (
               <li
-                key={`${item.id}-${index}`}
-                aria-hidden={index >= areas.length}
-                className="group relative aspect-[3/4] w-[240px] shrink-0 overflow-hidden rounded-[22px] bg-slate-100 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.35)] transition-transform duration-500 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 sm:w-[280px] lg:w-[300px]"
+                key={item.id}
+                className="group relative aspect-[3/4] w-[240px] shrink-0 snap-start overflow-hidden rounded-[22px] bg-slate-100 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.35)] transition-transform duration-500 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 sm:w-[280px] lg:w-[300px]"
               >
                 <Image
                   src={item.image}
@@ -120,58 +134,25 @@ export default function Areas() {
               </li>
             ))}
           </ul>
+
+          {/* خط پیشرفت — نشان می‌دهد نوار تا کجای مسیرش رفته است */}
+          {linked ? (
+            <div className="mx-5 mt-2 h-px bg-slate-200 sm:mx-8" aria-hidden="true">
+              <div
+                className="h-px origin-right bg-primary"
+                style={{ transform: "scaleX(var(--p, 0))" }}
+              />
+            </div>
+          ) : null}
         </div>
       </Reveal>
 
       {/* ---------------------------------------------------------- */}
-      {/* نمونه محاسبه — بدون قاب، فقط خطوط جداکننده                  */}
+      {/* محاسبه دقیق — ماشین‌حساب بهای تمام‌شده                       */}
       {/* ---------------------------------------------------------- */}
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <div className="mt-24 border-t border-slate-200 pt-12 lg:mt-28">
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-5">
-              <Reveal y={26}>
-                <span className="flex items-center gap-3 text-[12px] font-bold text-primary-ink">
-                  <span className="h-px w-9 bg-primary" aria-hidden="true" />
-                  {costExample.eyebrow}
-                </span>
-                <h3 className="mt-4 text-[24px] font-black leading-[1.4] text-slate-900 sm:text-[30px]">
-                  {costExample.title}
-                </h3>
-                <p className="mt-4 text-[14px] leading-8 text-slate-600">{costExample.description}</p>
-              </Reveal>
-            </div>
-
-            <div className="lg:col-span-7">
-              <Reveal delay={140} y={30} duration={1000}>
-                <ul className="border-y border-slate-100">
-                  {costExample.rows.map((row, index) => (
-                    <li
-                      key={row.label}
-                      className="flex items-baseline justify-between gap-6 py-4"
-                      style={{ borderTop: index > 0 ? "1px solid rgb(241 245 249)" : undefined }}
-                    >
-                      <span className="text-[13.5px] text-slate-600">{row.label}</span>
-                      <span className="flex items-baseline gap-2">
-                        <span className="num text-[15px] font-black text-slate-900">{row.value}</span>
-                        <span className="text-[10.5px] text-slate-400">{row.unit}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-5 flex items-baseline justify-between gap-6 border-t-2 border-primary pt-5">
-                  <span className="text-[14.5px] font-black text-primary-ink">{costExample.total.label}</span>
-                  <span className="flex items-baseline gap-2">
-                    <span className="num text-[24px] font-black text-slate-900">{costExample.total.value}</span>
-                    <span className="text-[11px] text-slate-500">{costExample.total.unit}</span>
-                  </span>
-                </div>
-
-                <p className="mt-4 text-[11px] leading-6 text-slate-400">{costExample.caption}</p>
-              </Reveal>
-            </div>
-          </div>
+          <CostCalculator />
         </div>
       </div>
     </section>

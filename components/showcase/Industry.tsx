@@ -1,13 +1,49 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 
 import Reveal from "@/components/motion/Reveal";
 import Parallax from "@/components/motion/Parallax";
 import SectionHeading from "@/components/ui/SectionHeading";
+import { toPersianDigits } from "@/lib/format";
 import { industry, media } from "@/lib/showcase-content";
 
+const TOTAL = toPersianDigits(String(industry.items.length).padStart(2, "0"));
+
+/**
+ * «ساخته شده برای صنعت نفت و گاز»
+ *
+ * با همان زبان ساختاری بخش «کاری که برای برند شما می‌کنیم / سه مسیر» نواتیک:
+ * فهرست موضوع‌ها با تایپوگرافی بزرگ در یک ستون جلو می‌رود و تصویرِ هر موضوع
+ * در قابِ چسبان کنارش عوض می‌شود؛ شمارنده «۰۱ / ۰۸» مسیر را نشان می‌دهد.
+ * موضوعِ فعال روشن است و بقیه کم‌رنگ؛ اسکرول صفحه خودش راوی است.
+ */
 export default function Industry() {
+  const [active, setActive] = useState(0);
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+
+  // هر موضوع وقتی به میانه دید می‌رسد، تصویرِ صحنه را عوض می‌کند
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(Number((entry.target as HTMLElement).dataset.index ?? 0));
+          }
+        }
+      },
+      { rootMargin: "-42% 0px -48% 0px", threshold: 0 },
+    );
+
+    itemRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const current = industry.items[active];
+
   return (
     <section
       id="industry"
@@ -68,60 +104,99 @@ export default function Industry() {
           </div>
         </Reveal>
 
-        {/* هشت حوزه پوشش */}
-        <div className="mt-16 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:mt-20 lg:grid-cols-4 lg:gap-x-12">
-          {industry.items.map((item, index) => (
-            <Reveal
-              key={item.title}
-              delay={(index % 4) * 80}
-              y={30}
-              duration={850}
-              className="group border-t border-white/12 pt-6"
-            >
-              <span className="num text-[12px] font-bold text-primary">{item.number}</span>
-              <h3 className="mt-3 text-[16px] font-black text-white/90 transition-colors duration-300 group-hover:text-primary">
-                {item.title}
-              </h3>
-              <p className="mt-2.5 text-[13px] leading-7 text-white/55">{item.text}</p>
+        {/* ---------------------------------------------------------- */}
+        {/* هشت حوزه — فهرستِ روایی + صحنه‌ی چسبان                       */}
+        {/* ---------------------------------------------------------- */}
+        <div className="mt-20 grid gap-10 lg:mt-28 lg:grid-cols-12 lg:gap-16">
+          {/* فهرست موضوع‌ها */}
+          <div className="lg:col-span-6">
+            <ol className="list-none">
+              {industry.items.map((item, index) => {
+                const isActive = index === active;
+                return (
+                  <li
+                    key={item.number}
+                    data-index={index}
+                    ref={(el) => {
+                      itemRefs.current[index] = el;
+                    }}
+                    className={`border-t border-white/10 py-9 transition-opacity duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] lg:py-12 ${
+                      isActive ? "opacity-100" : "lg:opacity-35"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="num text-[12px] font-black text-primary">{item.number}</span>
+                      <span className="num text-[11px] text-white/35">/ {TOTAL}</span>
+                      <span
+                        className={`h-px flex-1 origin-right bg-primary/50 transition-transform duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
+                          isActive ? "scale-x-100" : "scale-x-0"
+                        }`}
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <h3
+                      className={`mt-4 text-[22px] font-black leading-[1.4] transition-colors duration-500 sm:text-[26px] lg:text-[30px] ${
+                        isActive ? "text-white" : "text-white/85"
+                      }`}
+                    >
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 max-w-lg text-[13.5px] leading-8 text-white/55">{item.text}</p>
+
+                    {/* تصویر همان موضوع — فقط در موبایل، داخل خود روایت */}
+                    <figure className="relative mt-6 aspect-[16/10] overflow-hidden rounded-[18px] lg:hidden">
+                      <Image
+                        src={item.image}
+                        alt={item.imageAlt}
+                        fill
+                        sizes="92vw"
+                        className="object-cover"
+                      />
+                      <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent px-4 py-3 text-[11.5px] font-bold text-white">
+                        {item.caption}
+                      </figcaption>
+                    </figure>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+
+          {/* صحنه‌ی چسبان — تصویر موضوعِ فعال */}
+          <div className="hidden lg:block lg:col-span-6">
+            <Reveal y={36} duration={1000} className="lg:sticky lg:top-24">
+              <figure className="relative aspect-[4/4.3] max-h-[calc(100vh-8.5rem)] overflow-hidden rounded-[26px] bg-slate-900">
+                {industry.items.map((item, index) => (
+                  <Image
+                    key={item.number}
+                    src={item.image}
+                    alt={index === active ? item.imageAlt : ""}
+                    fill
+                    sizes="(min-width: 1024px) 44vw, 92vw"
+                    className={`object-cover transition-[opacity,transform] duration-[900ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
+                      index === active ? "z-10 scale-100 opacity-100" : "z-0 scale-[1.04] opacity-0"
+                    }`}
+                  />
+                ))}
+
+                <div
+                  className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30"
+                  aria-hidden="true"
+                />
+
+                <span className="num absolute start-6 top-6 z-30 text-[13px] font-black text-white/90">
+                  {current.number} <span className="text-white/45">/ {TOTAL}</span>
+                </span>
+
+                <figcaption className="absolute inset-x-6 bottom-6 z-30 flex items-end justify-between gap-4">
+                  <span key={current.number} className="animate-[swap_0.55s_cubic-bezier(0.16,1,0.3,1)_both]">
+                    <span className="block text-[11px] font-bold text-primary">{industry.eyebrow}</span>
+                    <span className="mt-1 block text-[16px] font-black text-white">{current.caption}</span>
+                  </span>
+                </figcaption>
+              </figure>
             </Reveal>
-          ))}
-        </div>
-
-        {/* دو تصویر با کپشن */}
-        <div className="mt-16 grid gap-6 lg:mt-24 lg:grid-cols-12 lg:gap-8">
-          <Reveal className="lg:col-span-7" y={36} duration={1000}>
-            <figure className="group relative overflow-hidden rounded-[26px]">
-              <Image
-                src={media.industryImage}
-                alt="مخازن و تجهیزات بارگیری یک دیپوی سوخت"
-                width={1600}
-                height={900}
-                sizes="(min-width: 1024px) 58vw, 92vw"
-                className="h-auto w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.03]"
-              />
-              <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-slate-950/85 to-transparent px-5 py-4">
-                <span className="text-[13px] font-bold text-white">دیپو و پایانه سوخت</span>
-                <span className="text-[11px] text-white/60">اندازه‌گیری، دما و افت</span>
-              </figcaption>
-            </figure>
-          </Reveal>
-
-          <Reveal className="lg:col-span-5" delay={120} y={36} duration={1000}>
-            <figure className="group relative h-full overflow-hidden rounded-[26px]">
-              <Image
-                src={media.industrySecondary}
-                alt="بررسی اسناد مالی و فاکتورهای خرید محموله"
-                width={1400}
-                height={900}
-                sizes="(min-width: 1024px) 40vw, 92vw"
-                className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.03]"
-              />
-              <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-slate-950/85 to-transparent px-5 py-4">
-                <span className="text-[13px] font-bold text-white">اسناد مالی و تسعیر ارز</span>
-                <span className="text-[11px] text-white/60">دالر و افغانی</span>
-              </figcaption>
-            </figure>
-          </Reveal>
+          </div>
         </div>
       </div>
     </section>

@@ -190,19 +190,72 @@ export const areas: AreaItem[] = [
   },
 ];
 
-/** نمونه محاسبه — بهای تمام‌شده واقعی یک محموله */
-export const costExample = {
+/**
+ * محاسبه دقیق — ماشین‌حساب بهای تمام‌شده
+ * ورودی‌ها با کشویی تنظیم می‌شوند و خروجی همان لحظه محاسبه می‌شود؛
+ * مقادیر پیش‌فرض همان نمونهٔ محمولهٔ دیزل قبلی است.
+ */
+export type CalculatorField = {
+  id: "volume" | "fob" | "freight" | "customs" | "loss" | "fx" | "sale";
+  label: string;
+  unit: string;
+  min: number;
+  max: number;
+  step: number;
+  defaultValue: number;
+  /** تعداد رقم اعشار هنگام نمایش */
+  decimals: number;
+  note?: string;
+};
+
+export const calculator = {
   eyebrow: "محاسبه دقیق",
-  title: "بهای تمام‌شده واقعی هر لیتر",
+  title: "بهای تمام‌شده واقعی هر لیتر را همین‌جا حساب کنید",
   description:
-    "قیمت خرید تنها یک بخش از ماجراست. کرایه حمل، حق‌الزحمه گمرک، عوارض ترانزیت، بیمه، افت و تبخیر و تفاوت نرخ ارز هم باید روی همان محموله تسهیم شود تا بدانید هر لیتر واقعاً چند تمام شده است.",
-  rows: [
-    { label: "قیمت خرید محموله (FOB)", value: "۰/۷۴۲", unit: "دالر / لیتر" },
-    { label: "کرایه حمل و ترانزیت", value: "۰/۰۵۸", unit: "دالر / لیتر" },
-    { label: "گمرک، عوارض و بیمه", value: "۰/۰۳۱", unit: "دالر / لیتر" },
-    { label: "افت و تبخیر مسیر", value: "۰/۰۱۲", unit: "دالر / لیتر" },
-  ],
-  total: { label: "بهای تمام‌شده نهایی", value: "۰/۸۴۳", unit: "دالر / لیتر" },
+    "قیمت خرید تنها یک بخش از ماجراست. کرایه حمل، حق‌الزحمه گمرک، عوارض ترانزیت، بیمه، افت و تبخیر و تفاوت نرخ ارز هم باید روی همان محموله تسهیم شود. مقادیر را تغییر دهید تا اثر هر قلم را روی بهای تمام‌شده و حاشیه سود ببینید.",
+  inputsTitle: "مشخصات محموله",
+  resultTitle: "نتیجه محاسبه",
+  resetLabel: "بازگشت به مقادیر نمونه",
+  fields: [
+    {
+      id: "volume",
+      label: "حجم محموله",
+      unit: "لیتر",
+      min: 10000,
+      max: 60000,
+      step: 1000,
+      defaultValue: 36000,
+      decimals: 0,
+      note: "ظرفیت یک تانکر معمول ۳۶ هزار لیتر است",
+    },
+    { id: "fob", label: "قیمت خرید (FOB)", unit: "دالر / لیتر", min: 0.5, max: 1.2, step: 0.001, defaultValue: 0.742, decimals: 3 },
+    { id: "freight", label: "کرایه حمل و ترانزیت", unit: "دالر / لیتر", min: 0, max: 0.15, step: 0.001, defaultValue: 0.058, decimals: 3 },
+    { id: "customs", label: "گمرک، عوارض و بیمه", unit: "دالر / لیتر", min: 0, max: 0.1, step: 0.001, defaultValue: 0.031, decimals: 3 },
+    { id: "loss", label: "افت و تبخیر مسیر", unit: "درصد", min: 0, max: 4, step: 0.1, defaultValue: 1.6, decimals: 1 },
+    { id: "fx", label: "نرخ تسعیر", unit: "افغانی / دالر", min: 60, max: 80, step: 0.5, defaultValue: 68.5, decimals: 1 },
+    { id: "sale", label: "قیمت فروش", unit: "دالر / لیتر", min: 0.6, max: 1.3, step: 0.001, defaultValue: 0.895, decimals: 3 },
+  ] as CalculatorField[],
+  breakdown: {
+    title: "ترکیب بهای تمام‌شده",
+    rows: [
+      { id: "fob", label: "قیمت خرید محموله (FOB)" },
+      { id: "freight", label: "کرایه حمل و ترانزیت" },
+      { id: "customs", label: "گمرک، عوارض و بیمه" },
+      { id: "loss", label: "سهم افت و تبخیر مسیر" },
+    ],
+  },
+  labels: {
+    costPerLiter: "بهای تمام‌شده هر لیتر",
+    costPerLiterAfn: "معادل افغانی",
+    deliveredLiters: "لیتر قابل فروش پس از افت",
+    totalCost: "کل هزینه محموله",
+    marginPerLiter: "حاشیه سود هر لیتر",
+    totalMargin: "سود ناخالص محموله",
+    usdPerLiter: "دالر / لیتر",
+    afnPerLiter: "افغانی / لیتر",
+    usd: "دالر",
+    liter: "لیتر",
+  },
   caption: "نمونه یک محموله دیزل؛ اعداد پس از استقرار با داده‌های واقعی شما جایگزین می‌شود.",
 };
 
@@ -216,6 +269,8 @@ export type ModuleItem = {
   tag: string;
   summary: string;
   capabilities: string[];
+  /** ماژول‌هایی که داده‌شان با این ماژول رد و بدل می‌شود — با id ارجاع داده می‌شوند */
+  related: string[];
   mock: "ledger" | "tanks" | "invoices" | "waybills" | "report" | "analytics" | "expenses" | "purchases" | "inventory" | "dashboard";
   kpi: { label: string; value: string };
 };
@@ -229,6 +284,7 @@ export const modules: ModuleItem[] = [
     summary:
       "صدور خودکار سند خرید، فروش و مصارف؛ دفاتر کل، معین و تفصیلی با امکان ثبت همزمان به دالر و افغانی و تسعیر روزانه.",
     capabilities: ["سند چند ارزی", "دفتر کل و معین", "تسعیر و سود و زیان ارزی", "قفل دوره مالی"],
+    related: ["sales", "purchases", "expenses"],
     mock: "ledger",
     kpi: { label: "ارزهای فعال", value: "۲" },
   },
@@ -240,6 +296,7 @@ export const modules: ModuleItem[] = [
     summary:
       "مدیریت صندوق‌ها، حساب‌های بانکی، چک‌ها و حواله‌ها؛ برنامه پرداخت به تأمین‌کنندگان و پیگیری دریافت از مشتریان عمده.",
     capabilities: ["صندوق و بانک", "سررسید چک‌ها", "برنامه پرداخت", "گزارش جریان نقد"],
+    related: ["accounting", "expenses", "purchases"],
     mock: "expenses",
     kpi: { label: "دوره گزارش", value: "روزانه" },
   },
@@ -251,6 +308,7 @@ export const modules: ModuleItem[] = [
     summary:
       "قیمت‌گذاری بر اساس فرآورده و مشتری، صدور فاکتور، کنترل سقف اعتبار و صورت‌حساب دوره‌ای برای جایگاه‌ها و مشتریان عمده.",
     capabilities: ["فاکتور نقدی و اعتباری", "سقف اعتبار", "صورت‌حساب مشتری", "گزارش فروش"],
+    related: ["inventory", "accounting", "dashboard"],
     mock: "invoices",
     kpi: { label: "سقف اعتبار", value: "خودکار" },
   },
@@ -262,6 +320,7 @@ export const modules: ModuleItem[] = [
     summary:
       "ثبت قرارداد خرید، پیگیری پارت بار، تخصیص هزینه‌های گمرک و ترانزیت و محاسبه بهای تمام‌شده پیش از فروش.",
     capabilities: ["قرارداد خرید", "رهگیری پارت بار", "تسهیم هزینه", "بهای تمام‌شده"],
+    related: ["inventory", "expenses", "accounting"],
     mock: "purchases",
     kpi: { label: "هزینه‌های تخصیصی", value: "۶ نوع" },
   },
@@ -273,6 +332,7 @@ export const modules: ModuleItem[] = [
     summary:
       "موجودی لحظه‌ای به تفکیک مخزن و فرآورده، انبارگردانی دوره‌ای و ثبت مغایرت بین موجودی دفتری و اندازه‌گیری فیزیکی.",
     capabilities: ["موجودی به لیتر و تن", "انبارگردانی", "مغایرت‌گیری", "کاردکس فرآورده"],
+    related: ["purchases", "sales", "operations"],
     mock: "inventory",
     kpi: { label: "واحد اندازه‌گیری", value: "لیتر / تن" },
   },
@@ -284,6 +344,7 @@ export const modules: ModuleItem[] = [
     summary:
       "ثبت هزینه‌های دیپو، تعمیرات، سوخت ناوگان و مصارف اداری با تفکیک مرکز هزینه و تخصیص به پروژه یا محموله.",
     capabilities: ["مرکز هزینه", "تخصیص به محموله", "بودجه‌بندی", "گزارش انحراف"],
+    related: ["purchases", "operations", "accounting"],
     mock: "expenses",
     kpi: { label: "مراکز هزینه", value: "نامحدود" },
   },
@@ -295,6 +356,7 @@ export const modules: ModuleItem[] = [
     summary:
       "تخصیص تانکر و راننده، صدور بارنامه، ثبت باسکول مبدأ و مقصد و محاسبه کسری مسیر با تفکیک افت مجاز و غیرمجاز.",
     capabilities: ["بارنامه الکترونیک", "باسکول رفت و برگشت", "کسری مسیر", "برنامه تانکرها"],
+    related: ["inventory", "expenses", "reports"],
     mock: "waybills",
     kpi: { label: "افت مجاز", value: "قابل تنظیم" },
   },
@@ -306,6 +368,7 @@ export const modules: ModuleItem[] = [
     summary:
       "گزارش‌های استاندارد مالی، عملیاتی و مدیریتی به همراه خروجی اکسل و PDF و امکان تعریف گزارش سفارشی.",
     capabilities: ["گزارش استاندارد", "خروجی اکسل و PDF", "گزارش سفارشی", "زمان‌بندی ارسال"],
+    related: ["accounting", "dashboard", "analytics"],
     mock: "report",
     kpi: { label: "قالب خروجی", value: "۳" },
   },
@@ -317,6 +380,7 @@ export const modules: ModuleItem[] = [
     summary:
       "شاخص‌های کلیدی، موجودی مخازن، فروش روزانه، مطالبات و هشدارهای مهم در یک صفحه برای مدیران.",
     capabilities: ["شاخص‌های کلیدی", "هشدارها", "نمودارهای لحظه‌ای", "دسترسی سطح‌بندی"],
+    related: ["reports", "analytics", "sales"],
     mock: "dashboard",
     kpi: { label: "به‌روزرسانی", value: "لحظه‌ای" },
   },
@@ -328,6 +392,7 @@ export const modules: ModuleItem[] = [
     summary:
       "تحلیل روند فروش، حاشیه سود هر فرآورده، عملکرد رانندگان و مقایسه دوره‌ها برای تصمیم‌گیری دقیق‌تر.",
     capabilities: ["روند فروش", "حاشیه سود", "عملکرد ناوگان", "مقایسه دوره‌ای"],
+    related: ["reports", "dashboard", "operations"],
     mock: "analytics",
     kpi: { label: "بُعد تحلیل", value: "۴" },
   },
@@ -346,41 +411,65 @@ export const industry = {
       number: "۰۱",
       title: "عملیات نفت و گاز",
       text: "تخلیه، بارگیری، انتقال بین مخازن و اندازه‌گیری در هر نقطه تحویل؛ هر جابه‌جایی یک رکورد مستقل دارد که به محموله وصل می‌شود.",
+      image: "/images/showcase/intro-operations.jpg",
+      imageAlt: "اپراتورهای دیپو در حال پایش مخازن و تخلیه تانکرها",
+      caption: "عملیات روزانه دیپو",
     },
     {
       number: "۰۲",
       title: "مدیریت مالی",
       text: "حسابداری دو ارزی با نرخ روز، تفکیک هزینه‌های ارزی و افغانی و تراز دقیق در پایان هر دوره.",
+      image: "/images/showcase/industry-finance.jpg",
+      imageAlt: "بررسی اسناد مالی و فاکتورهای خرید محموله",
+      caption: "اسناد مالی و تسعیر دو ارزی",
     },
     {
       number: "۰۳",
       title: "هزینه‌های عملیاتی",
       text: "کرایه، گمرک، عوارض، بیمه و مصارف دیپو روی همان پارت بار تسهیم می‌شود تا بهای تمام‌شده واقعی به دست آید.",
+      image: "/images/showcase/industry-pipeline.jpg",
+      imageAlt: "مسیر انتقال و ترانزیت مواد نفتی",
+      caption: "هزینه‌های ترانزیت و مسیر",
     },
     {
       number: "۰۴",
       title: "خرید و فروش",
       text: "قراردادهای تأمین خارجی و فروش داخلی در یک زنجیره؛ از پیش‌فاکتور تا تسویه نهایی و کنترل سقف بدهی.",
+      image: "/images/showcase/benefits-operations.jpg",
+      imageAlt: "تحویل فرآورده به مشتری در جایگاه",
+      caption: "فروش و تحویل فرآورده",
     },
     {
       number: "۰۵",
       title: "زنجیره تأمین",
       text: "برنامه‌ریزی تأمین بر اساس موجودی مخازن و مصرف روزانه، با هشدار رسیدن به حد سفارش.",
+      image: "/images/showcase/hero-poster.jpg",
+      imageAlt: "نمای هوایی پایانه و مخازن نفتی",
+      caption: "پایانه و زنجیره تأمین",
     },
     {
       number: "۰۶",
       title: "کنترل موجودی",
       text: "اندازه‌گیری دوره‌ای، ثبت دما و چگالی و تفکیک افت طبیعی از کسری غیرعادی در مسیر.",
+      image: "/images/showcase/industry-depot.jpg",
+      imageAlt: "مخازن و تجهیزات بارگیری یک دیپوی سوخت",
+      caption: "اندازه‌گیری و کنترل مخازن",
     },
     {
       number: "۰۷",
       title: "گزارش‌دهی",
       text: "گزارش‌های مالی و عملیاتی آماده برای مدیریت، حسابرسی و ارائه به شرکا.",
+      image: "/images/portfolio/novatech-management-dashboard.png",
+      imageAlt: "داشبورد گزارش‌های مدیریتی سامانه نواتیک",
+      caption: "گزارش‌های آماده مدیریتی",
     },
     {
       number: "۰۸",
       title: "تحلیل عملکرد",
       text: "مقایسه دوره‌ها، حاشیه سود هر فرآورده و بررسی عملکرد رانندگان و دیپوها.",
+      image: "/images/portfolio/novatech-oil-and-gas-management-system.webp",
+      imageAlt: "معرفی سامانه مدیریت نفت و گاز نواتیک",
+      caption: "سامانه نفت و گاز نواتیک",
     },
   ],
   flow: [
@@ -505,6 +594,9 @@ export const benefits = {
   eyebrow: "مزایا",
   title: "تأثیری که روی کار روزمره دیده می‌شود",
   lead: "این سامانه قرار است تعداد تماس‌ها، خطاهای ثبت و فایل‌های اکسل را کم کند؛ نه این‌که فرآیند جدیدی اضافه کند.",
+  /** جمله آغاز داستان — با تایپوگرافی بزرگ، مثل «داستان نواتیک» در صفحه درباره ما */
+  storyIntro: ["اطلاعات یک‌بار در مبدأ ثبت می‌شود؛", "بقیه مسیر، خودش پیش می‌رود."],
+  storyNote: "شش تغییری که بعد از استقرار، به همین ترتیب در کار روزانه اتفاق می‌افتد.",
   items: [
     {
       number: "۰۱",

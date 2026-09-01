@@ -283,20 +283,6 @@
   animation: rail 1.6s linear infinite;
 }
 
-@keyframes areasMarquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-/* نوار افقی «شش بخش» — چرخش پیوسته، با هاور/لمس/فوکوس متوقف می‌شود. */
-.areas-track {
-  animation: areasMarquee 46s linear infinite;
-}
-
 @keyframes growX {
   from {
     transform: scaleX(0);
@@ -319,4 +305,63 @@
   to {
     transform: scaleY(1);
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* محاسبه دقیق — کشویی‌های ماشین‌حساب                                  */
+/* یک خط باریک و یک دستگیره‌ی ساده؛ بدون درخشش و بدون گرادیان.         */
+/* ------------------------------------------------------------------ */
+.calc-range {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+}
+.calc-range::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--color-bg-soft);
+}
+.calc-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -6.5px;
+  height: 16px;
+  width: 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid var(--color-primary-dark);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+  transition:
+    transform 0.25s var(--ease-premium),
+    border-color 0.25s var(--ease-premium);
+}
+.calc-range:hover::-webkit-slider-thumb,
+.calc-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.15);
+  border-color: var(--color-primary-ink);
+}
+.calc-range::-moz-range-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--color-bg-soft);
+}
+.calc-range::-moz-range-progress {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+.calc-range::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid var(--color-primary-dark);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+}
+.calc-range:focus-visible {
+  outline: none;
 }

@@ -1,11 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowUpLeft } from "lucide-react";
 
 import Reveal from "@/components/motion/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { mockViews, type MockKey } from "@/components/ui/mockups/views";
+import { toPersianDigits } from "@/lib/format";
 import { headings, modules, type ModuleItem } from "@/lib/showcase-content";
 
 /** Maps a module to the screen shown beside it; two modules share a screen. */
@@ -27,6 +28,10 @@ export default function Modules() {
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
   const activeModule = modules[active];
   const Mock = mockViews[mockFor[activeModule.mock]];
+  const total = toPersianDigits(String(modules.length));
+  const related = activeModule.related
+    .map((id) => modules.findIndex((item) => item.id === id))
+    .filter((index) => index >= 0);
 
   const onKeyDown = (event: React.KeyboardEvent, index: number) => {
     if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
@@ -116,7 +121,9 @@ export default function Modules() {
                 <div key={activeModule.id} className="animate-[swap_0.55s_cubic-bezier(0.16,1,0.3,1)_both]">
                   <div className="flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 pb-5">
                     <div>
-                      <span className="num text-[12px] font-bold text-primary-ink">ماژول {activeModule.number}</span>
+                      <span className="num text-[12px] font-bold text-primary-ink">
+                        ماژول {activeModule.number} <span className="text-slate-400">/ {total}</span>
+                      </span>
                       <h3 className="mt-2 text-[24px] font-black text-slate-900 sm:text-[28px]">{activeModule.name}</h3>
                     </div>
                     <span className="text-[11.5px] font-bold text-slate-400">{activeModule.tag}</span>
@@ -139,6 +146,25 @@ export default function Modules() {
                   <div className="mt-7 flex items-baseline justify-between gap-4 border-t border-slate-200 pt-4">
                     <span className="text-[12px] text-slate-500">{activeModule.kpi.label}</span>
                     <span className="num text-[15px] font-black text-primary-ink">{activeModule.kpi.value}</span>
+                  </div>
+
+                  {/* ارتباط ماژول‌ها — داده این ماژول با کدام بخش‌ها رد و بدل می‌شود */}
+                  <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-200 pt-4">
+                    <span className="text-[12px] text-slate-500">در اتصال مستقیم با:</span>
+                    {related.map((index) => (
+                      <button
+                        key={modules[index].id}
+                        type="button"
+                        onClick={() => setActive(index)}
+                        className="group/link flex items-center gap-1 text-[12.5px] font-bold text-slate-700 transition-colors duration-300 hover:text-primary-ink"
+                      >
+                        {modules[index].name}
+                        <ArrowUpLeft
+                          className="size-3.5 text-slate-300 transition-all duration-300 group-hover/link:-translate-x-0.5 group-hover/link:text-primary"
+                          aria-hidden="true"
+                        />
+                      </button>
+                    ))}
                   </div>
                 </div>
 

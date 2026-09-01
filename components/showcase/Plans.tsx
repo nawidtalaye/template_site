@@ -10,16 +10,21 @@ import { plans } from "@/lib/showcase-content";
 type VariantId = keyof typeof plans.matrix;
 
 /**
- * پلن‌ها — با ساختار صفحه‌ی خدمات نواتیک:
- * یک انتخاب‌گرِ نوع استقرار، سه ستون و یک فهرست مشترک که جلوی هر امکان
- * مشخص می‌کند در کدام پلن هست و در کدام نیست. خبری از قاب و سایه نیست؛
- * ستون‌ها را فقط یک خط عمودی و یک زمینه‌ی خیلی ملایم جدا می‌کند.
+ * پلن‌ها — با همان ساختار بخش «امکانات هر پلن» در سایت نواتیک:
+ * یک انتخاب‌گر بالای بخش نوع استقرار را عوض می‌کند و سه پلن کنار هم
+ * می‌نشینند؛ هر پلن فهرست «کامل» امکانات را دارد و جلوی هر ردیف مشخص
+ * است که «شامل این پلن» هست یا «در این پلن نیست». ستون‌ها قاب و سایه
+ * ندارند؛ فقط خط جداکننده و یک زمینه‌ی ملایم برای پلن پیشنهادی.
  */
 export default function Plans() {
   const [variant, setVariant] = useState<VariantId>("cloud");
+  const [mobilePlan, setMobilePlan] = useState(1);
   const matrix = plans.matrix[variant];
 
   const includedCount = (column: number) => matrix.filter((row) => row[column]).length;
+
+  const featureRows = (column: number) =>
+    plans.labels.map((label, rowIndex) => ({ label, has: matrix[rowIndex][column] }));
 
   return (
     <section id="plans" className="relative overflow-hidden bg-white py-20 lg:py-28" aria-labelledby="plans-heading">
@@ -64,21 +69,23 @@ export default function Plans() {
         </Reveal>
 
         {/* ---------------------------------------------------------- */}
-        {/* ماتریس دسکتاپ                                              */}
+        {/* دسکتاپ — سه پلن کنار هم، هر کدام با فهرست کامل امکانات       */}
         {/* ---------------------------------------------------------- */}
-        <Reveal y={30} duration={1000} className="mt-8 hidden lg:block">
-          <div className="grid grid-cols-12 items-end gap-0 border-b border-slate-200">
-            <div className="col-span-6 pb-8">
-              <span className="text-[11.5px] font-bold text-slate-400">امکانات هر پلن</span>
-            </div>
-
+        <Reveal y={30} duration={1000} className="mt-10 hidden lg:block">
+          <div className="grid grid-cols-3">
             {plans.columns.map((plan, index) => (
               <div
                 key={plan.key}
-                className={`col-span-2 px-5 pb-8 ${plan.highlight ? "rounded-t-[20px] bg-primary/[0.06] pt-6" : ""}`}
+                className={`flex flex-col px-7 pb-8 pt-7 ${
+                  plan.highlight
+                    ? "rounded-[24px] bg-primary/[0.06]"
+                    : index > 0
+                      ? "border-s border-slate-200/80"
+                      : ""
+                }`}
               >
                 <div className="flex items-center gap-2">
-                  <h3 className="text-[19px] font-black text-slate-900">{plan.name}</h3>
+                  <h3 className="text-[20px] font-black text-slate-900">{plan.name}</h3>
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
                       plan.highlight ? "bg-primary text-slate-900" : "bg-slate-100 text-slate-500"
@@ -89,18 +96,46 @@ export default function Plans() {
                 </div>
                 <p className="mt-2 min-h-[42px] text-[12px] leading-6 text-slate-500">{plan.target}</p>
 
-                <div className="mt-4 border-t border-slate-200/80 pt-3">
-                  <div className="text-[13px] font-black text-slate-900">{plan.price}</div>
-                  <div className="mt-0.5 text-[11px] text-slate-400">{plan.priceNote}</div>
+                <div className="mt-4 flex items-baseline justify-between gap-3 border-y border-slate-200/80 py-3.5">
+                  <div>
+                    <div className="text-[13.5px] font-black text-slate-900">{plan.price}</div>
+                    <div className="mt-0.5 text-[11px] text-slate-400">{plan.priceNote}</div>
+                  </div>
+                  <span className="text-[11.5px] font-bold text-slate-400">
+                    <span className="num text-slate-700">{includedCount(index)}</span> از {plans.labels.length} امکان
+                  </span>
                 </div>
 
-                <div className="mt-4 text-[11.5px] font-bold text-slate-400">
-                  <span className="num text-slate-700">{includedCount(index)}</span> از {matrix.length} امکان
-                </div>
+                {/* فهرست کامل امکانات — مثل نواتیک، شامل و غیرشامل کنار هم */}
+                <ul key={variant} className="mt-2 flex-1 animate-[swap_0.55s_cubic-bezier(0.16,1,0.3,1)_both]">
+                  {featureRows(index).map((row) => (
+                    <li
+                      key={row.label}
+                      className="flex items-start gap-2.5 border-b border-slate-100 py-2.5 last:border-b-0"
+                    >
+                      <span
+                        className={`mt-1 flex size-4 shrink-0 items-center justify-center rounded-full ${
+                          row.has ? "bg-primary/18 text-primary-ink" : "text-slate-300"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {row.has ? (
+                          <Check className="size-2.5" strokeWidth={3.5} />
+                        ) : (
+                          <Minus className="size-2.5" strokeWidth={3.5} />
+                        )}
+                      </span>
+                      <span className={`text-[12.5px] leading-6 ${row.has ? "text-slate-700" : "text-slate-400"}`}>
+                        {row.label}
+                        <span className="sr-only">{row.has ? " — شامل این پلن" : " — در این پلن نیست"}</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
 
                 <a
                   href="#contact"
-                  className={`mt-4 flex items-center justify-center rounded-full px-4 py-2.5 text-[12.5px] font-black transition-all duration-300 ${
+                  className={`mt-7 flex items-center justify-center rounded-full px-4 py-3 text-[13px] font-black transition-all duration-300 ${
                     plan.highlight
                       ? "bg-primary text-slate-900 hover:bg-primary-hover"
                       : "border border-slate-300 text-slate-700 hover:border-slate-900 hover:bg-slate-900 hover:text-white"
@@ -111,62 +146,48 @@ export default function Plans() {
               </div>
             ))}
           </div>
-
-          <ul>
-            {plans.labels.map((label, rowIndex) => (
-              <li
-                key={label}
-                className="grid grid-cols-12 items-center border-b border-slate-100 transition-colors duration-300 hover:bg-slate-50/70"
-              >
-                <span className="col-span-6 py-3.5 text-[13.5px] text-slate-700">{label}</span>
-
-                {plans.columns.map((plan, columnIndex) => {
-                  const has = matrix[rowIndex][columnIndex];
-                  const last = rowIndex === plans.labels.length - 1;
-                  return (
-                    <span
-                      key={plan.key}
-                      className={`col-span-2 flex items-center justify-center px-5 py-3.5 ${
-                        plan.highlight ? `bg-primary/[0.06] ${last ? "rounded-b-[20px]" : ""}` : ""
-                      }`}
-                    >
-                      <span
-                        className={`flex size-6 items-center justify-center rounded-full ${
-                          has ? "bg-primary/18 text-primary-ink" : "text-slate-300"
-                        }`}
-                        title={has ? "شامل این پلن" : "در این پلن نیست"}
-                      >
-                        {has ? (
-                          <Check className="size-3.5" strokeWidth={3} />
-                        ) : (
-                          <Minus className="size-3.5" strokeWidth={3} />
-                        )}
-                        <span className="sr-only">{has ? "شامل این پلن است" : "در این پلن نیست"}</span>
-                      </span>
-                    </span>
-                  );
-                })}
-              </li>
-            ))}
-          </ul>
         </Reveal>
 
         {/* ---------------------------------------------------------- */}
-        {/* موبایل و تبلت — هر پلن جداگانه با فهرست خودش               */}
+        {/* موبایل و تبلت — انتخاب پلن و فهرست کامل همان پلن            */}
         {/* ---------------------------------------------------------- */}
-        <div className="mt-10 flex flex-col gap-12 lg:hidden">
-          {plans.columns.map((plan, index) => {
-            const rows = plans.labels
-              .map((label, rowIndex) => ({ label, has: matrix[rowIndex][index] }))
-              .filter((row) => row.has);
+        <div className="mt-10 lg:hidden">
+          <Reveal y={24}>
+            <div role="tablist" aria-label="انتخاب پلن" className="flex border-b border-slate-200">
+              {plans.columns.map((plan, index) => {
+                const isActive = index === mobilePlan;
+                return (
+                  <button
+                    key={plan.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => setMobilePlan(index)}
+                    className={`relative flex-1 pb-3 pt-2 text-center text-[14px] font-black transition-colors duration-300 ${
+                      isActive ? "text-slate-900" : "text-slate-400"
+                    }`}
+                  >
+                    {plan.name}
+                    <span
+                      className={`absolute inset-x-4 bottom-0 h-[2.5px] rounded-full bg-primary transition-transform duration-500 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
+                        isActive ? "scale-x-100" : "scale-x-0"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </Reveal>
 
+          {(() => {
+            const plan = plans.columns[mobilePlan];
             return (
-              <Reveal
-                key={plan.key}
-                delay={index * 90}
-                y={30}
-                duration={900}
-                className={plan.highlight ? "-mx-2 rounded-[24px] bg-primary/[0.06] px-5 py-7" : ""}
+              <div
+                key={`${plan.key}-${variant}`}
+                className={`animate-[swap_0.55s_cubic-bezier(0.16,1,0.3,1)_both] ${
+                  plan.highlight ? "-mx-2 mt-6 rounded-[24px] bg-primary/[0.06] px-5 py-7" : "mt-6"
+                }`}
               >
                 <div className="flex items-center gap-2">
                   <h3 className="text-[21px] font-black text-slate-900">{plan.name}</h3>
@@ -185,16 +206,28 @@ export default function Plans() {
                   <span className="text-[11.5px] text-slate-500">{plan.priceNote}</span>
                 </div>
 
-                <ul className="mt-5 flex flex-col gap-2.5">
-                  {rows.map((row) => (
-                    <li key={row.label} className="flex items-start gap-2.5 text-[13px] leading-6 text-slate-600">
+                <ul className="mt-4">
+                  {featureRows(mobilePlan).map((row) => (
+                    <li
+                      key={row.label}
+                      className="flex items-start gap-2.5 border-b border-slate-100 py-2.5 last:border-b-0"
+                    >
                       <span
-                        className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/18 text-primary-ink"
+                        className={`mt-1 flex size-4 shrink-0 items-center justify-center rounded-full ${
+                          row.has ? "bg-primary/18 text-primary-ink" : "text-slate-300"
+                        }`}
                         aria-hidden="true"
                       >
-                        <Check className="size-2.5" strokeWidth={3.5} />
+                        {row.has ? (
+                          <Check className="size-2.5" strokeWidth={3.5} />
+                        ) : (
+                          <Minus className="size-2.5" strokeWidth={3.5} />
+                        )}
                       </span>
-                      {row.label}
+                      <span className={`text-[13px] leading-6 ${row.has ? "text-slate-700" : "text-slate-400"}`}>
+                        {row.label}
+                        <span className="sr-only">{row.has ? " — شامل این پلن" : " — در این پلن نیست"}</span>
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -209,9 +242,9 @@ export default function Plans() {
                 >
                   {plan.cta}
                 </a>
-              </Reveal>
+              </div>
             );
-          })}
+          })()}
         </div>
 
         {/* در همه پلن‌ها */}
