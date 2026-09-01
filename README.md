@@ -58,14 +58,13 @@ components/
   LeadForm.tsx          ارسال، اعتبارسنجی و وضعیت فرم‌ها (Context)
   motion/               Reveal، RevealLine، Counter، Parallax، ScrollProgress
   ui/
-    Glyph.tsx           آیکون بُعد‌دار (بدون قاب و سایه)
-    SectionHeading.tsx  سربرگ مشترک بخش‌ها
+    SectionHeading.tsx  سربرگ مشترک بخش‌ها (شماره، تیتر، امضای برند)
     PhoneField.tsx      فیلد شماره تلفن با وضعیت اعتبارسنجی
     SubmitButton.tsx    دکمه اصلی فرم‌ها
     ClientMark.tsx      نشان‌های انتزاعی مشتریان (جایگزین با لوگوی واقعی)
     mockups/            صفحه‌های نمونه نرم‌افزار (کد، نه تصویر)
   showcase/             بخش‌های صفحه:
-    Hero · Intro · Features · Modules · Industry · Statistics ·
+    Hero · Intro · Areas · Modules · Industry · Statistics ·
     HowItWorks · ProductShowcase · Benefits · Plans · Customers · About · FinalCta
 lib/
   showcase-content.ts   تمام متن، اعداد، آدرس تصویر/ویدیو — برای ویرایش آسان
@@ -75,13 +74,13 @@ lib/
   lead.ts               اعتبارسنجی مشترک فرم (کلاینت و سرور)
   format.ts             تبدیل ارقام به فارسی
 public/
-  videos/               hero-oil-gas.mp4 / .webm (لوپ سینمایی پالایشگاه)
+  videos/               back_video.mp4 (تنها ویدیوی هیرو)
   images/showcase/      hero-poster، intro، industry، benefits
 ```
 
 ## بخش‌های صفحه و anchorها
 
-`#hero` · `#intro` · `#features` · `#modules` · `#industry` · `#statistics` ·
+`#hero` · `#intro` · `#areas` · `#modules` · `#industry` · `#statistics` ·
 `#process` · `#showcase` · `#benefits` · `#plans` · `#customers` · `#about` · `#contact`
 
 منوی بالا، منوی موبایل و فوتر همه از همین anchorها استفاده می‌کنند
@@ -94,8 +93,8 @@ public/
 - **تصویرها:** `public/images/showcase/` — نام فایل‌ها گویا هستند
   (`hero-poster.jpg`, `intro-operations.jpg`, `industry-depot.jpg`,
   `industry-finance.jpg`, `industry-pipeline.jpg`, `benefits-operations.jpg`).
-- **ویدیو:** `public/videos/hero-oil-gas.mp4` و `.webm` را جایگزین کنید؛
-  ویژگی‌ها: muted، loop، playsInline، autoplay، با poster در `hero-poster.jpg`.
+- **ویدیو:** فقط یک فایل استفاده می‌شود: `public/videos/back_video.mp4`
+  (muted، loop، playsInline، autoplay، با poster در `hero-poster.jpg`).
 - **لوگوی مشتریان:** نشان‌های فعلی در `components/ui/ClientMark.tsx` انتزاعی و
   نمونه هستند.
 - **نمای نرم‌افزار:** صفحه‌ها در `components/ui/mockups/views.tsx` با کد ساخته

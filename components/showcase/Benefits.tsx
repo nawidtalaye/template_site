@@ -16,7 +16,7 @@ export default function Benefits() {
       aria-labelledby="benefits-heading"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeading index="۰۸" eyebrow={benefits.eyebrow} title={benefits.title} lead={benefits.lead} />
+        <SectionHeading index="۰۸" eyebrow={benefits.eyebrow} title={benefits.title} lead={benefits.lead} headingId="benefits-heading" />
 
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:gap-16">
           {/* تصویر */}
@@ -64,9 +64,7 @@ export default function Benefits() {
                       </div>
                     </div>
                     <span className="hidden shrink-0 items-center gap-2 sm:flex">
-                      <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-slate-500 ring-1 ring-slate-200">
-                        {item.metric}
-                      </span>
+                      <span className="text-[11.5px] font-bold text-slate-400">{item.metric}</span>
                       <ArrowLeft
                         className="size-4 -translate-x-2 text-primary opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
                         aria-hidden="true"

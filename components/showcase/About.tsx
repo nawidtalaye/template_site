@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Check } from "lucide-react";
+import { Check, Quote } from "lucide-react";
 
 import Reveal from "@/components/motion/Reveal";
 import Parallax from "@/components/motion/Parallax";
@@ -13,7 +13,8 @@ export default function About() {
   return (
     <section id="about" className="relative overflow-hidden bg-white py-20 lg:py-28" aria-labelledby="about-heading">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
-        <SectionHeading index="۱۱" eyebrow={about.eyebrow} title={about.title} lead="نرم‌افزار را همان تیمی پشتیبانی می‌کند که آن را ساخته است." />
+        <SectionHeading index="۱۱" eyebrow={about.eyebrow} title={about.title} lead="نرم‌افزار را همان تیمی پشتیبانی می‌کند که آن را ساخته است." headingId="about-heading"
+          signature />
 
         <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">
@@ -83,6 +84,12 @@ export default function About() {
                   <span className="text-[13.5px] font-black text-slate-900">{companyInfo.legalName}</span>
                   <span className="mt-0.5 text-[11.5px] text-slate-500">{about.imageCaption} · هرات</span>
                 </span>
+              </div>
+
+              <div className="relative mt-6 rounded-2xl bg-primary/10 px-6 py-6">
+                <Quote className="size-6 text-primary" aria-hidden="true" />
+                <p className="mt-3 text-[14px] font-medium leading-8 text-slate-800">«{about.quote.text}»</p>
+                <span className="mt-3 block text-[11.5px] font-bold text-primary-ink">{about.quote.role}</span>
               </div>
             </Reveal>
           </div>

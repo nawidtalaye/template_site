@@ -9,7 +9,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { mockViews, type MockKey } from "@/components/ui/mockups/views";
 import { showcase } from "@/lib/showcase-content";
 
-const viewKeys: MockKey[] = ["dashboard", "ledger", "tanks", "invoices", "report"];
+const viewKeys: MockKey[] = ["dashboard", "ledger", "tanks", "invoices", "purchases", "report"];
 
 const alerts = [
   { icon: Gauge, text: "مخزن ۳ به کمتر از ۵۰٪ ظرفیت رسیده", time: "۰۹:۲۰" },
@@ -26,6 +26,7 @@ export default function ProductShowcase() {
     <section id="showcase" className="relative overflow-hidden bg-white py-20 lg:py-28" aria-labelledby="showcase-heading">
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
         <SectionHeading
+          headingId="showcase-heading"
           index="۰۷"
           eyebrow={showcase.eyebrow}
           title={showcase.title}
@@ -78,12 +79,12 @@ export default function ProductShowcase() {
             <div key={`${active}-text`} className="animate-[swap_0.5s_cubic-bezier(0.16,1,0.3,1)_both]">
               <h3 className="text-[22px] font-black leading-snug text-slate-900 sm:text-[26px]">{view.title}</h3>
               <p className="mt-3 text-[13.5px] leading-7 text-slate-500">{view.desc}</p>
-              <ul className="mt-5 flex flex-wrap gap-2">
-                {view.tags.map((tag) => (
-                  <li
-                    key={tag}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-[11px] font-bold text-slate-500"
-                  >
+              <ul className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] font-bold text-slate-400">
+                {view.tags.map((tag, index) => (
+                  <li key={tag} className="flex items-center gap-3">
+                    {index > 0 ? (
+                      <span className="h-1 w-1 rounded-full bg-slate-300" aria-hidden="true" />
+                    ) : null}
                     {tag}
                   </li>
                 ))}
