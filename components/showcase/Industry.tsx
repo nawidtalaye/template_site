@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
 
 import Reveal from "@/components/motion/Reveal";
 import Parallax from "@/components/motion/Parallax";
@@ -14,36 +13,13 @@ const TOTAL = toPersianDigits(String(industry.items.length).padStart(2, "0"));
 /**
  * «ساخته شده برای صنعت نفت و گاز»
  *
- * با همان زبان ساختاری بخش «کاری که برای برند شما می‌کنیم / سه مسیر» نواتیک:
- * فهرست موضوع‌ها با تایپوگرافی بزرگ در یک ستون جلو می‌رود و تصویرِ هر موضوع
- * در قابِ چسبان کنارش عوض می‌شود؛ شمارنده «۰۱ / ۰۸» مسیر را نشان می‌دهد.
- * موضوعِ فعال روشن است و بقیه کم‌رنگ؛ اسکرول صفحه خودش راوی است.
+ * هشت حوزه دقیقاً با ساختار بخش «تیم نواتیک / افرادی که پشت راهکارهای
+ * نواتیک هستند» در novatechsoft.com: تصویر پرتره‌ای با شماره‌ی «۰۱ / ۰۸»
+ * روی گوشه، و زیرِ عکس — نه روی آن — عنوان و یک خط توضیح، دقیقاً مثل
+ * نام و سمتِ هر عضو تیم. این‌جا به‌جای عکس افراد، عکس همان بخش از کار
+ * می‌نشیند.
  */
 export default function Industry() {
-  const [active, setActive] = useState(0);
-  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
-
-  // هر موضوع وقتی به میانه دید می‌رسد، تصویرِ صحنه را عوض می‌کند
-  useEffect(() => {
-    if (typeof IntersectionObserver === "undefined") return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActive(Number((entry.target as HTMLElement).dataset.index ?? 0));
-          }
-        }
-      },
-      { rootMargin: "-42% 0px -48% 0px", threshold: 0 },
-    );
-
-    itemRefs.current.forEach((el) => el && observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  const current = industry.items[active];
-
   return (
     <section
       id="industry"
@@ -105,99 +81,35 @@ export default function Industry() {
         </Reveal>
 
         {/* ---------------------------------------------------------- */}
-        {/* هشت حوزه — فهرستِ روایی + صحنه‌ی چسبان                       */}
+        {/* هشت حوزه — همان قاب «تیم نواتیک»: پرتره + شماره + عنوان زیرش */}
         {/* ---------------------------------------------------------- */}
-        <div className="mt-20 grid gap-10 lg:mt-28 lg:grid-cols-12 lg:gap-16">
-          {/* فهرست موضوع‌ها */}
-          <div className="lg:col-span-6">
-            <ol className="list-none">
-              {industry.items.map((item, index) => {
-                const isActive = index === active;
-                return (
-                  <li
-                    key={item.number}
-                    data-index={index}
-                    ref={(el) => {
-                      itemRefs.current[index] = el;
-                    }}
-                    className={`border-t border-white/10 py-9 transition-opacity duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] lg:py-12 ${
-                      isActive ? "opacity-100" : "lg:opacity-35"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="num text-[12px] font-black text-primary">{item.number}</span>
-                      <span className="num text-[11px] text-white/35">/ {TOTAL}</span>
-                      <span
-                        className={`h-px flex-1 origin-right bg-primary/50 transition-transform duration-700 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
-                          isActive ? "scale-x-100" : "scale-x-0"
-                        }`}
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <h3
-                      className={`mt-4 text-[22px] font-black leading-[1.4] transition-colors duration-500 sm:text-[26px] lg:text-[30px] ${
-                        isActive ? "text-white" : "text-white/85"
-                      }`}
-                    >
-                      {item.title}
-                    </h3>
-                    <p className="mt-3 max-w-lg text-[13.5px] leading-8 text-white/55">{item.text}</p>
-
-                    {/* تصویر همان موضوع — فقط در موبایل، داخل خود روایت */}
-                    <figure className="relative mt-6 aspect-[16/10] overflow-hidden rounded-[18px] lg:hidden">
-                      <Image
-                        src={item.image}
-                        alt={item.imageAlt}
-                        fill
-                        sizes="92vw"
-                        className="object-cover"
-                      />
-                      <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent px-4 py-3 text-[11.5px] font-bold text-white">
-                        {item.caption}
-                      </figcaption>
-                    </figure>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-
-          {/* صحنه‌ی چسبان — تصویر موضوعِ فعال */}
-          <div className="hidden lg:block lg:col-span-6">
-            <Reveal y={36} duration={1000} className="lg:sticky lg:top-24">
-              <figure className="relative aspect-[4/4.3] max-h-[calc(100vh-8.5rem)] overflow-hidden rounded-[26px] bg-slate-900">
-                {industry.items.map((item, index) => (
-                  <Image
-                    key={item.number}
-                    src={item.image}
-                    alt={index === active ? item.imageAlt : ""}
-                    fill
-                    sizes="(min-width: 1024px) 44vw, 92vw"
-                    className={`object-cover transition-[opacity,transform] duration-[900ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] ${
-                      index === active ? "z-10 scale-100 opacity-100" : "z-0 scale-[1.04] opacity-0"
-                    }`}
-                  />
-                ))}
-
+        <ul className="mt-20 grid list-none grid-cols-2 gap-x-5 gap-y-12 sm:grid-cols-3 sm:gap-x-8 lg:mt-28 lg:grid-cols-4">
+          {industry.items.map((item, index) => (
+            <Reveal as="li" key={item.number} y={26} delay={index * 70}>
+              <figure className="relative aspect-[3/4] overflow-hidden rounded-[20px] bg-slate-900">
+                <Image
+                  src={item.image}
+                  alt={item.imageAlt}
+                  fill
+                  loading={index < 4 ? "eager" : "lazy"}
+                  sizes="(min-width: 1024px) 22vw, (min-width: 640px) 30vw, 44vw"
+                  className="object-cover transition-transform duration-[1100ms] [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.06]"
+                />
                 <div
-                  className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/30"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-transparent"
                   aria-hidden="true"
                 />
-
-                <span className="num absolute start-6 top-6 z-30 text-[13px] font-black text-white/90">
-                  {current.number} <span className="text-white/45">/ {TOTAL}</span>
+                <span className="num absolute start-3.5 top-3.5 text-[11.5px] font-black text-white/90 [text-shadow:0_1px_8px_rgba(2,6,23,0.55)]">
+                  {item.number} <span className="text-white/45">/ {TOTAL}</span>
                 </span>
-
-                <figcaption className="absolute inset-x-6 bottom-6 z-30 flex items-end justify-between gap-4">
-                  <span key={current.number} className="animate-[swap_0.55s_cubic-bezier(0.16,1,0.3,1)_both]">
-                    <span className="block text-[11px] font-bold text-primary">{industry.eyebrow}</span>
-                    <span className="mt-1 block text-[16px] font-black text-white">{current.caption}</span>
-                  </span>
-                </figcaption>
               </figure>
+
+              <h3 className="mt-4 text-[15px] font-black leading-[1.4] text-white sm:text-[16px]">{item.title}</h3>
+              <p className="mt-1 text-[11.5px] font-bold text-primary">{item.caption}</p>
+              <p className="mt-2 text-[11.5px] leading-6 text-white/45 line-clamp-3">{item.text}</p>
             </Reveal>
-          </div>
-        </div>
+          ))}
+        </ul>
       </div>
     </section>
   );

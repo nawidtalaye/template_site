@@ -283,6 +283,22 @@
   animation: rail 1.6s linear infinite;
 }
 
+@keyframes areasMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* نوار افقی «شش بخش» — چرخش پیوسته و بی‌درز: کارت از یک سو خارج و از سوی
+   دیگر وارد می‌شود، چون خودِ نوار دو برابر لیست را پشت‌سرهم دارد.
+   با هاور موس، فوکوس یا لمس متوقف می‌شود تا کارت‌ها قابل خواندن بمانند. */
+.areas-track {
+  animation: areasMarquee 46s linear infinite;
+}
+
 @keyframes growX {
   from {
     transform: scaleX(0);
@@ -364,4 +380,24 @@
 }
 .calc-range:focus-visible {
   outline: none;
+}
+
+/* نسخه‌ی تیره‌ی همان کشویی، برای پنل تحلیلیِ محاسبه دقیق */
+.calc-range--dark::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.12);
+}
+.calc-range--dark::-webkit-slider-thumb {
+  background: #0b1220;
+  border-color: var(--color-primary);
+}
+.calc-range--dark:hover::-webkit-slider-thumb,
+.calc-range--dark:focus-visible::-webkit-slider-thumb {
+  border-color: #ffffff;
+}
+.calc-range--dark::-moz-range-track {
+  background: rgba(255, 255, 255, 0.12);
+}
+.calc-range--dark::-moz-range-thumb {
+  background: #0b1220;
+  border-color: var(--color-primary);
 }
