@@ -66,7 +66,7 @@ export default function Areas() {
           />
 
           <ul
-            className="areas-track flex w-max list-none gap-5 px-5 sm:gap-6 sm:px-8"
+            className="areas-track flex w-max list-none"
             style={
               {
                 animationPlayState: paused || !inView || prefersReducedMotion() ? "paused" : "running",
@@ -78,7 +78,7 @@ export default function Areas() {
                 key={`${item.id}-${index}`}
                 aria-hidden={index >= areas.length}
                 tabIndex={index >= areas.length ? -1 : 0}
-                className="group relative aspect-[3/4] w-[240px] shrink-0 overflow-hidden rounded-[22px] bg-slate-100 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.35)] transition-transform duration-500 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 focus-visible:-translate-y-2 focus-visible:outline-none sm:w-[280px] lg:w-[300px]"
+                className="group relative me-5 aspect-[3/4] w-[240px] shrink-0 overflow-hidden rounded-[22px] bg-slate-100 shadow-[0_18px_40px_-24px_rgba(15,23,42,0.35)] transition-transform duration-500 [transition-timing-function:cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 focus-visible:-translate-y-2 focus-visible:outline-none sm:me-6 sm:w-[280px] lg:w-[300px]"
               >
                 <Image
                   src={item.image}
@@ -95,17 +95,17 @@ export default function Areas() {
                 />
 
                 <span
-                  className="num absolute start-4 top-4 text-[13px] font-black text-white/90 [text-shadow:0_1px_10px_rgba(2,6,23,0.5)]"
+                  className="num absolute start-4 top-4 text-[14px] font-black text-white/90 [text-shadow:0_1px_10px_rgba(2,6,23,0.5)]"
                   aria-hidden="true"
                 >
                   {item.number}
                 </span>
 
                 <div className="absolute inset-x-4 bottom-4">
-                  <span className="block text-[11px] font-bold text-white/80 [text-shadow:0_1px_10px_rgba(2,6,23,0.5)]">
+                  <span className="block text-[12.5px] font-bold text-white/80 [text-shadow:0_1px_10px_rgba(2,6,23,0.5)]">
                     {item.kicker.split("،")[0].split(" و ")[0]}
                   </span>
-                  <span className="mt-1 block text-[16px] font-black leading-[1.4] text-white [text-shadow:0_1px_12px_rgba(2,6,23,0.55)] sm:text-[18px]">
+                  <span className="mt-1 block text-[18px] font-black leading-[1.4] text-white [text-shadow:0_1px_12px_rgba(2,6,23,0.55)] sm:text-[20px]">
                     {item.title}
                   </span>
                 </div>

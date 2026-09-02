@@ -41,7 +41,7 @@ export default function SectionHeading({
     >
       <div className="max-w-2xl">
         <span
-          className={`flex items-center gap-3 text-[12px] font-bold ${
+          className={`flex items-center gap-3 text-[13px] font-bold ${
             dark ? "text-primary" : "text-primary-ink"
           }`}
         >
@@ -53,7 +53,7 @@ export default function SectionHeading({
         {titleLines ? (
           <h2
             id={headingId}
-            className={`mt-4 text-[26px] font-black leading-[1.4] sm:text-[32px] lg:text-[38px] ${
+            className={`mt-4 text-[32px] font-black leading-[1.3] sm:text-[40px] lg:text-[48px] ${
               dark ? "text-white" : "text-slate-900"
             }`}
           >
@@ -66,7 +66,7 @@ export default function SectionHeading({
         ) : (
           <h2
             id={headingId}
-            className={`mt-4 text-[26px] font-black leading-[1.4] sm:text-[32px] lg:text-[38px] ${
+            className={`mt-4 text-[32px] font-black leading-[1.3] sm:text-[40px] lg:text-[48px] ${
               dark ? "text-white" : "text-slate-900"
             }`}
           >
@@ -87,7 +87,7 @@ export default function SectionHeading({
       </div>
       {lead ? (
         <p
-          className={`max-w-md text-[13px] leading-7 sm:text-sm lg:text-left ${
+          className={`max-w-lg text-[14.5px] leading-8 sm:text-[15.5px] lg:text-left ${
             dark ? "text-slate-400" : "text-slate-500"
           }`}
         >

@@ -83,11 +83,11 @@ export default function CostCalculator() {
   return (
     <div>
       <Reveal y={26}>
-        <span className="flex items-center gap-3 text-[12px] font-bold text-primary-ink">
+        <span className="flex items-center gap-3 text-[13.5px] font-bold text-primary-ink">
           <span className="h-px w-9 bg-primary" aria-hidden="true" />
           {calculator.eyebrow}
         </span>
-        <h3 className="mt-4 max-w-2xl text-[24px] font-black leading-[1.4] text-slate-900 sm:text-[30px]">
+        <h3 className="mt-4 max-w-2xl text-[26px] font-black leading-[1.4] text-slate-900 sm:text-[34px]">
           {calculator.title}
         </h3>
         <p className="mt-4 max-w-2xl text-[14px] leading-8 text-slate-600">{calculator.description}</p>
@@ -101,13 +101,13 @@ export default function CostCalculator() {
             {/* ------------------------------------------------------ */}
             <div className="border-b border-white/10 p-7 sm:p-9 lg:border-b-0 lg:border-e lg:border-white/10">
               <div className="flex items-baseline justify-between gap-4">
-                <span className="text-[12px] font-black tracking-wide text-white/90">
+                <span className="text-[13.5px] font-black tracking-wide text-white/90">
                   {calculator.inputsTitle}
                 </span>
                 <button
                   type="button"
                   onClick={() => setValues(defaults)}
-                  className={`flex items-center gap-1.5 text-[11px] font-bold text-primary transition-opacity duration-300 ${
+                  className={`flex items-center gap-1.5 text-[12.5px] font-bold text-primary transition-opacity duration-300 ${
                     isDirty ? "opacity-100" : "pointer-events-none opacity-0"
                   }`}
                 >
@@ -123,20 +123,20 @@ export default function CostCalculator() {
                   return (
                     <div key={field.id} className="py-4">
                       <div className="flex items-baseline justify-between gap-4">
-                        <label htmlFor={`calc-${field.id}`} className="text-[13px] font-bold text-white/80">
+                        <label htmlFor={`calc-${field.id}`} className="text-[14.5px] font-bold text-white/80">
                           {field.label}
                         </label>
                         <span className="flex items-baseline gap-2">
                           {hasDelta ? (
-                            <span className="num text-[10.5px] font-bold text-primary">
+                            <span className="num text-[12px] font-bold text-primary">
                               {delta > 0 ? "+" : "−"}
                               {fa(Math.abs(delta), field.decimals)}
                             </span>
                           ) : null}
-                          <span className="num text-[15px] font-black text-white">
+                          <span className="num text-[16.5px] font-black text-white">
                             {fa(values[field.id], field.decimals, field.id === "volume")}
                           </span>
-                          <span className="text-[10.5px] text-white/40">{field.unit}</span>
+                          <span className="text-[12px] text-white/40">{field.unit}</span>
                         </span>
                       </div>
                       <input
@@ -150,7 +150,7 @@ export default function CostCalculator() {
                         onChange={(event) => set(field.id, Number(event.target.value))}
                         aria-label={`${field.label} (${field.unit})`}
                       />
-                      {field.note ? <p className="mt-1.5 text-[10.5px] text-white/35">{field.note}</p> : null}
+                      {field.note ? <p className="mt-1.5 text-[12px] text-white/35">{field.note}</p> : null}
                     </div>
                   );
                 })}
@@ -161,12 +161,12 @@ export default function CostCalculator() {
             {/* نتیجه — نمودار حلقه‌ای ترکیب هزینه + سود و زیان           */}
             {/* ------------------------------------------------------ */}
             <div className="p-7 sm:p-9">
-              <span className="text-[12px] font-black tracking-wide text-white/90">{calculator.resultTitle}</span>
+              <span className="text-[13.5px] font-black tracking-wide text-white/90">{calculator.resultTitle}</span>
 
               <div className="mt-6 flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:gap-10">
                 {/* نمودار حلقه‌ای */}
                 <div className="relative shrink-0" aria-hidden="true">
-                  <svg viewBox="0 0 130 130" className="size-[168px] -rotate-90 sm:size-[188px]">
+                  <svg viewBox="0 0 130 130" className="size-[184px] -rotate-90 sm:size-[204px]">
                     <circle cx="65" cy="65" r={R} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="14" />
                     {result.arcs.map((arc) =>
                       arc.dash > 0.4 ? (
@@ -186,11 +186,11 @@ export default function CostCalculator() {
                     )}
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-[9.5px] font-bold text-white/45">{labels.costPerLiter}</span>
-                    <span className="num mt-1 text-[26px] font-black leading-none text-white sm:text-[30px]">
+                    <span className="text-[11px] font-bold text-white/45">{labels.costPerLiter}</span>
+                    <span className="num mt-1 text-[30px] font-black leading-none text-white sm:text-[34px]">
                       {fa(result.costPerLiter, 3)}
                     </span>
-                    <span className="mt-1 text-[9.5px] text-white/45">{labels.usdPerLiter}</span>
+                    <span className="mt-1 text-[11px] text-white/45">{labels.usdPerLiter}</span>
                   </div>
                 </div>
 
@@ -203,7 +203,7 @@ export default function CostCalculator() {
                         key={row.id}
                         className="flex items-center justify-between gap-4 border-b border-white/[0.07] py-2.5 last:border-b-0"
                       >
-                        <span className="flex min-w-0 items-center gap-2.5 text-[12.5px] text-white/70">
+                        <span className="flex min-w-0 items-center gap-2.5 text-[14px] text-white/70">
                           <span
                             className="size-2 shrink-0 rounded-full"
                             style={{ backgroundColor: SHARE_COLOR[row.id] }}
@@ -212,8 +212,8 @@ export default function CostCalculator() {
                           <span className="truncate">{row.label}</span>
                         </span>
                         <span className="flex shrink-0 items-baseline gap-2.5">
-                          <span className="num text-[10.5px] text-white/35">٪{fa(share.percent, 1)}</span>
-                          <span className="num w-14 text-left text-[13px] font-black text-white">
+                          <span className="num text-[12px] text-white/35">٪{fa(share.percent, 1)}</span>
+                          <span className="num w-14 text-left text-[14.5px] font-black text-white">
                             {fa(share.value, 3)}
                           </span>
                         </span>
@@ -223,7 +223,7 @@ export default function CostCalculator() {
                 </ul>
               </div>
 
-              <div className="mt-2 flex items-baseline justify-between gap-4 border-t border-white/10 pt-4 text-[11px] text-white/40">
+              <div className="mt-2 flex items-baseline justify-between gap-4 border-t border-white/10 pt-4 text-[12.5px] text-white/40">
                 <span>{labels.costPerLiterAfn}</span>
                 <span className="flex items-baseline gap-1.5">
                   <span className="num font-bold text-white/70">{fa(result.costPerLiter * values.fx, 2)}</span>
@@ -238,7 +238,7 @@ export default function CostCalculator() {
                     isProfit ? "border-primary/25 bg-primary/[0.08]" : "border-red-400/25 bg-red-400/[0.08]"
                   }`}
                 >
-                  <span className="flex items-center justify-between gap-2 text-[10.5px] font-bold text-white/50">
+                  <span className="flex items-center justify-between gap-2 text-[12px] font-bold text-white/50">
                     {labels.marginPerLiter}
                     {isProfit ? (
                       <TrendingUp className="size-3.5 text-primary" strokeWidth={2.5} />
@@ -247,11 +247,11 @@ export default function CostCalculator() {
                     )}
                   </span>
                   <span
-                    className={`num mt-1.5 block text-[19px] font-black ${isProfit ? "text-primary" : "text-red-400"}`}
+                    className={`num mt-1.5 block text-[21px] font-black ${isProfit ? "text-primary" : "text-red-400"}`}
                   >
                     {isProfit ? "" : "−"}
                     {fa(Math.abs(result.marginPerLiter), 3)}
-                    <span className="ms-1.5 text-[10px] font-bold text-white/40">{labels.usdPerLiter}</span>
+                    <span className="ms-1.5 text-[11.5px] font-bold text-white/40">{labels.usdPerLiter}</span>
                   </span>
                 </div>
 
@@ -260,7 +260,7 @@ export default function CostCalculator() {
                     isProfit ? "border-primary/25 bg-primary/[0.08]" : "border-red-400/25 bg-red-400/[0.08]"
                   }`}
                 >
-                  <span className="flex items-center justify-between gap-2 text-[10.5px] font-bold text-white/50">
+                  <span className="flex items-center justify-between gap-2 text-[12px] font-bold text-white/50">
                     {labels.totalMargin}
                     {isProfit ? (
                       <TrendingUp className="size-3.5 text-primary" strokeWidth={2.5} />
@@ -269,16 +269,16 @@ export default function CostCalculator() {
                     )}
                   </span>
                   <span
-                    className={`num mt-1.5 block text-[19px] font-black ${isProfit ? "text-primary" : "text-red-400"}`}
+                    className={`num mt-1.5 block text-[21px] font-black ${isProfit ? "text-primary" : "text-red-400"}`}
                   >
                     {isProfit ? "" : "−"}
                     {fa(Math.abs(result.totalMargin), 0, true)}
-                    <span className="ms-1.5 text-[10px] font-bold text-white/40">{labels.usd}</span>
+                    <span className="ms-1.5 text-[11.5px] font-bold text-white/40">{labels.usd}</span>
                   </span>
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[10.5px] text-white/35">
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[12px] text-white/35">
                 <span>
                   {labels.deliveredLiters}: <span className="num text-white/60">{fa(result.deliveredLiters, 0, true)}</span>{" "}
                   {labels.liter}
@@ -290,7 +290,7 @@ export default function CostCalculator() {
             </div>
           </div>
         </div>
-        <p className="mt-4 text-[11px] leading-6 text-slate-400">{calculator.caption}</p>
+        <p className="mt-4 text-[12.5px] leading-6 text-slate-400">{calculator.caption}</p>
       </Reveal>
     </div>
   );

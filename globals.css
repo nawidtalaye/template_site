@@ -1,0 +1,403 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* NovaTech Soft — design tokens (identical brand palette, refined)    */
+/* ------------------------------------------------------------------ */
+@theme {
+  /* Brand — unchanged from the original NovaTech Soft palette */
+  --color-primary: #54dcc6;
+  --color-primary-hover: #45bba7;
+  --color-primary-light: #e6faf7;
+  --color-primary-dark: #2ab8a0;
+  /* Deep teal used for text/accents on light surfaces (was #0f766e) */
+  --color-primary-ink: #0f766e;
+  --color-text-dark: #111827;
+  --color-text-muted: #4b5563;
+  --color-bg-light: #ffffff;
+  --color-bg-slate: #f8fafc;
+  --color-bg-soft: #f1f5f9;
+
+  /* Typography — IRANYekanX FaNum stays the single typeface of the site */
+  --font-iranyekan: var(--font-iranyekan-next), "IRANYekanX FaNum", system-ui, sans-serif;
+  --font-sans: var(--font-iranyekan-next), "IRANYekanX FaNum", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  --default-font-family: var(--font-iranyekan-next), "IRANYekanX FaNum", system-ui, sans-serif;
+
+  --breakpoint-mobile: 480px;
+  --breakpoint-3xl: 1920px;
+
+  /* Motion */
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyframes                                                          */
+/* ------------------------------------------------------------------ */
+
+/* ------------------------------------------------------------------ */
+/* Base                                                               */
+/* ------------------------------------------------------------------ */
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #111827;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 92px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: var(--color-text-dark);
+    font-family: var(--font-iranyekan);
+    /* همان تنظیماتی که نواتیک برای متن فارسی استفاده می‌کند:
+       ارقام فارسی، کرنینگ روشن و ارتفاع خطِ آزاد برای خواندن طولانی. */
+    font-size: 15px;
+    line-height: 1.9;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "ss01", "kern";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    line-height: 1.45;
+    /* فارسی به فاصله‌ی حروف نیاز ندارد؛ ترازِ بصری با وزن و اندازه است */
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Persian figures and Latin figures share one tabular rhythm in tables. */
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "ss01", "kern";
+    letter-spacing: 0;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+    color: #0b1220;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Utilities                                                          */
+/* ------------------------------------------------------------------ */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion system — Intersection Observer driven reveals                */
+/* ------------------------------------------------------------------ */
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(var(--reveal-x, 0px), var(--reveal-y, 30px), 0) scaleX(var(--reveal-scale-x, 1))
+      scale(var(--reveal-scale, 1));
+    transition:
+      opacity var(--reveal-duration, 900ms) var(--ease-premium) var(--reveal-delay, 0ms),
+      transform var(--reveal-duration, 900ms) var(--ease-premium) var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  [data-reveal="visible"] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    will-change: auto;
+  }
+
+  /* Masked line-by-line reveal for headline type.
+     The padding keeps Persian descenders from being clipped, and the inner
+     span travels far enough to stay hidden behind the mask. */
+  [data-reveal-line] {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.2em;
+    margin-bottom: -0.2em;
+  }
+  [data-reveal-line] > span {
+    display: block;
+    transform: translate3d(0, calc(115% + 0.45em), 0);
+    transition: transform var(--reveal-duration, 1000ms) var(--ease-premium) var(--reveal-delay, 0ms);
+  }
+  [data-reveal="visible"] [data-reveal-line] > span,
+  [data-reveal-line][data-reveal="visible"] > span {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.skip-to-content {
+  position: fixed;
+  top: 0;
+  inset-inline-start: 0;
+  z-index: 100;
+  transform: translateY(-150%);
+  margin: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.75rem;
+  background: var(--color-primary);
+  color: #0b1220;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+.skip-to-content:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  [data-reveal],
+  [data-reveal="visible"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  [data-reveal-line] > span {
+    transform: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Hero — only a short veil behind the text, so the footage stays lit   */
+/* ------------------------------------------------------------------ */
+.hero-veil {
+  background-image:
+    /* راستِ کادر، جایی که متن ایستاده (RTL) */
+    linear-gradient(
+      to left,
+      rgba(2, 6, 23, 0.66) 0%,
+      rgba(2, 6, 23, 0.4) 24%,
+      rgba(2, 6, 23, 0.14) 50%,
+      rgba(2, 6, 23, 0) 76%
+    ),
+    /* بالا برای هدر و پایین برای نشانگر اسکرول */
+      linear-gradient(
+        to bottom,
+        rgba(2, 6, 23, 0.42) 0%,
+        rgba(2, 6, 23, 0.06) 22%,
+        rgba(2, 6, 23, 0) 58%,
+        rgba(2, 6, 23, 0.4) 100%
+      );
+}
+@media (max-width: 900px) {
+  .hero-veil {
+    background-image: linear-gradient(
+      to top,
+      rgba(2, 6, 23, 0.78) 0%,
+      rgba(2, 6, 23, 0.6) 34%,
+      rgba(2, 6, 23, 0.34) 68%,
+      rgba(2, 6, 23, 0.22) 100%
+    );
+  }
+}
+
+/* Scroll cue */
+@keyframes scrollHint {
+  0% {
+    transform: translateY(-80%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(140%);
+    opacity: 0;
+  }
+}
+.scroll-hint-dot {
+  animation: scrollHint 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+/* ------------------------------------------------------------------ */
+/* Section-level motion helpers                                        */
+/* ------------------------------------------------------------------ */
+@keyframes swap {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes screenSwap {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes rail {
+  to {
+    background-position-x: -26px;
+  }
+}
+
+/* Animated flow rail for the oil & gas chain (RTL: it travels right→left). */
+.flow-rail {
+  background-image: repeating-linear-gradient(
+    to left,
+    rgba(84, 220, 198, 0.85) 0 8px,
+    rgba(148, 163, 184, 0.22) 8px 26px
+  );
+  background-repeat: repeat-x;
+  animation: rail 1.6s linear infinite;
+}
+
+@keyframes areasMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* نوار افقی «شش بخش» — چرخش پیوسته و بی‌درز: کارت از یک سو خارج و از سوی
+   دیگر وارد می‌شود، چون خودِ نوار دو برابر لیست را پشت‌سرهم دارد.
+   با هاور موس، فوکوس یا لمس متوقف می‌شود تا کارت‌ها قابل خواندن بمانند. */
+.areas-track {
+  animation: areasMarquee 46s linear infinite;
+}
+
+@keyframes growX {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes growY {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* محاسبه دقیق — کشویی‌های ماشین‌حساب                                  */
+/* یک خط باریک و یک دستگیره‌ی ساده؛ بدون درخشش و بدون گرادیان.         */
+/* ------------------------------------------------------------------ */
+.calc-range {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+  cursor: pointer;
+}
+.calc-range::-webkit-slider-runnable-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--color-bg-soft);
+}
+.calc-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -6.5px;
+  height: 16px;
+  width: 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid var(--color-primary-dark);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+  transition:
+    transform 0.25s var(--ease-premium),
+    border-color 0.25s var(--ease-premium);
+}
+.calc-range:hover::-webkit-slider-thumb,
+.calc-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.15);
+  border-color: var(--color-primary-ink);
+}
+.calc-range::-moz-range-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--color-bg-soft);
+}
+.calc-range::-moz-range-progress {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+.calc-range::-moz-range-thumb {
+  height: 12px;
+  width: 12px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 2px solid var(--color-primary-dark);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.18);
+}
+.calc-range:focus-visible {
+  outline: none;
+}
+
+/* نسخه‌ی تیره‌ی همان کشویی، برای پنل تحلیلیِ محاسبه دقیق */
+.calc-range--dark::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.12);
+}
+.calc-range--dark::-webkit-slider-thumb {
+  background: #0b1220;
+  border-color: var(--color-primary);
+}
+.calc-range--dark:hover::-webkit-slider-thumb,
+.calc-range--dark:focus-visible::-webkit-slider-thumb {
+  border-color: #ffffff;
+}
+.calc-range--dark::-moz-range-track {
+  background: rgba(255, 255, 255, 0.12);
+}
+.calc-range--dark::-moz-range-thumb {
+  background: #0b1220;
+  border-color: var(--color-primary);
+}

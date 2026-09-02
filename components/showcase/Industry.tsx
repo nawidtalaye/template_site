@@ -99,14 +99,14 @@ export default function Industry() {
                   className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/55 via-transparent to-transparent"
                   aria-hidden="true"
                 />
-                <span className="num absolute start-3.5 top-3.5 text-[11.5px] font-black text-white/90 [text-shadow:0_1px_8px_rgba(2,6,23,0.55)]">
+                <span className="num absolute start-3.5 top-3.5 text-[12.5px] font-black text-white/90 [text-shadow:0_1px_8px_rgba(2,6,23,0.55)]">
                   {item.number} <span className="text-white/45">/ {TOTAL}</span>
                 </span>
               </figure>
 
-              <h3 className="mt-4 text-[15px] font-black leading-[1.4] text-white sm:text-[16px]">{item.title}</h3>
-              <p className="mt-1 text-[11.5px] font-bold text-primary">{item.caption}</p>
-              <p className="mt-2 text-[11.5px] leading-6 text-white/45 line-clamp-3">{item.text}</p>
+              <h3 className="mt-4 text-[18px] font-black leading-[1.4] text-white sm:text-[20px]">{item.title}</h3>
+              <p className="mt-1.5 text-[13px] font-bold text-primary">{item.caption}</p>
+              <p className="mt-2 text-[12.5px] leading-6 text-white/45 line-clamp-3">{item.text}</p>
             </Reveal>
           ))}
         </ul>
